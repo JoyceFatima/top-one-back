@@ -14,7 +14,7 @@ const mockUser = {
   updatedAt: new Date(),
   deletedAt: new Date(),
   userRoles: [],
-}
+};
 
 jest.mock('@/utils/funcs', () => ({
   getToken: jest.fn(),
@@ -67,7 +67,9 @@ describe('AuthController', () => {
     it('should throw an error on failed login', async () => {
       const user = { username: 'test', password: 'password' };
 
-      jest.spyOn(authService, 'login').mockRejectedValue(new Error('Invalid credentials'));
+      jest
+        .spyOn(authService, 'login')
+        .mockRejectedValue(new Error('Invalid credentials'));
 
       await expect(authController.create(user)).rejects.toEqual({
         message: 'Invalid credentials',
@@ -79,10 +81,15 @@ describe('AuthController', () => {
   describe('renewToken', () => {
     it('should return success response on successful token renewal', async () => {
       const authHeader = 'Bearer fake-jwt-token';
-      const renewedTokenResponse = { token: 'renewed-fake-token', user: mockUser };
+      const renewedTokenResponse = {
+        token: 'renewed-fake-token',
+        user: mockUser,
+      };
 
       (getToken as jest.Mock).mockReturnValue('fake-jwt-token');
-      jest.spyOn(authService, 'renewToken').mockResolvedValue(renewedTokenResponse);
+      jest
+        .spyOn(authService, 'renewToken')
+        .mockResolvedValue(renewedTokenResponse);
 
       const result = await authController.renewToken(authHeader);
 
@@ -99,9 +106,13 @@ describe('AuthController', () => {
       const authHeader = 'Bearer fake-jwt-token';
 
       (getToken as jest.Mock).mockReturnValue('fake-jwt-token');
-      jest.spyOn(authService, 'renewToken').mockRejectedValue(new Error('Invalid token'));
+      jest
+        .spyOn(authService, 'renewToken')
+        .mockRejectedValue(new Error('Invalid token'));
 
-      await expect(authController.renewToken(authHeader)).rejects.toEqual(new Error('Invalid token'));
+      await expect(authController.renewToken(authHeader)).rejects.toEqual(
+        new Error('Invalid token'),
+      );
     });
   });
 });

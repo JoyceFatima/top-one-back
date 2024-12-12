@@ -52,7 +52,7 @@ const mockOrderProduct: OrderProducts = {
         product: null,
         order: null,
         quantity: 2,
-      }
+      },
     ],
     shoppingCart: [
       {
@@ -70,8 +70,8 @@ const mockOrderProduct: OrderProducts = {
           id: 'id',
           name: 'name',
           phone: 'phone',
-        }
-      }
+        },
+      },
     ],
     user: {
       id: 'userId',
@@ -111,7 +111,8 @@ describe('OrderProductsService', () => {
       ],
     }).compile();
 
-    orderProductsService = module.get<OrderProductsService>(OrderProductsService);
+    orderProductsService =
+      module.get<OrderProductsService>(OrderProductsService);
     orderProductsRepository = module.get(getRepositoryToken(OrderProducts));
   });
 
@@ -137,7 +138,9 @@ describe('OrderProductsService', () => {
       const result = await orderProductsService.findOne({ id: '1' });
 
       expect(result).toEqual(mockOrderProduct);
-      expect(orderProductsRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(orderProductsRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
     });
   });
 
@@ -148,7 +151,9 @@ describe('OrderProductsService', () => {
       const result = await orderProductsService.create(mockOrderProduct);
 
       expect(result).toEqual(mockOrderProduct);
-      expect(orderProductsRepository.save).toHaveBeenCalledWith(mockOrderProduct);
+      expect(orderProductsRepository.save).toHaveBeenCalledWith(
+        mockOrderProduct,
+      );
     });
   });
 

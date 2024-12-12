@@ -43,11 +43,13 @@ const mockOrder: Order = {
 const mockAddOrder: IOrder = {
   clientId: 'clientId',
   shoppingCarts: ['shoppingCarts'],
-  products: [{
-    id: 'id',
-    quantity: 2
-  }]
-}
+  products: [
+    {
+      id: 'id',
+      quantity: 2,
+    },
+  ],
+};
 
 const mockOrdersService = {
   findAll: jest.fn(),
@@ -64,9 +66,7 @@ describe('OrdersController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrdersController],
-      providers: [
-        { provide: OrdersService, useValue: mockOrdersService },
-      ],
+      providers: [{ provide: OrdersService, useValue: mockOrdersService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -89,9 +89,17 @@ describe('OrdersController', () => {
       const statusFilter = Status.PROCESSING;
       ordersService.findAll.mockResolvedValue([mockOrder]);
 
-      const result = await ordersController.findAll(statusFilter, clientIdFilter, userIdFilter);
+      const result = await ordersController.findAll(
+        statusFilter,
+        clientIdFilter,
+        userIdFilter,
+      );
 
-      expect(result).toEqual({ message: 'Success', data: [mockOrder], statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: [mockOrder],
+        statusCode: 200,
+      });
       expect(ordersService.findAll).toHaveBeenCalledWith({
         status: statusFilter,
         client: { id: clientIdFilter },
@@ -104,11 +112,17 @@ describe('OrdersController', () => {
 
       const result = await ordersController.findAll();
 
-      expect(result).toEqual({ message: 'Success', data: [mockOrder], statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: [mockOrder],
+        statusCode: 200,
+      });
     });
 
     it('should throw an error with custom message when fetching fails', async () => {
-      ordersService.findAll.mockRejectedValue(new Error('Custom error message'));
+      ordersService.findAll.mockRejectedValue(
+        new Error('Custom error message'),
+      );
 
       await expect(ordersController.findAll()).rejects.toEqual({
         message: 'Custom error message',
@@ -123,7 +137,11 @@ describe('OrdersController', () => {
 
       const result = await ordersController.findOne('1');
 
-      expect(result).toEqual({ message: 'Success', data: mockOrder, statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: mockOrder,
+        statusCode: 200,
+      });
       expect(ordersService.findOne).toHaveBeenCalledWith('1');
     });
 
@@ -142,18 +160,30 @@ describe('OrdersController', () => {
       mockGetToken.mockReturnValue('mockToken');
       ordersService.create.mockResolvedValue(mockOrder);
 
-      const result = await ordersController.create('Bearer mockToken', mockAddOrder);
+      const result = await ordersController.create(
+        'Bearer mockToken',
+        mockAddOrder,
+      );
 
-      expect(result).toEqual({ message: 'Order created', data: mockOrder, statusCode: 201 });
+      expect(result).toEqual({
+        message: 'Order created',
+        data: mockOrder,
+        statusCode: 201,
+      });
       expect(mockGetToken).toHaveBeenCalledWith('Bearer mockToken');
-      expect(ordersService.create).toHaveBeenCalledWith('mockToken', mockAddOrder);
+      expect(ordersService.create).toHaveBeenCalledWith(
+        'mockToken',
+        mockAddOrder,
+      );
     });
 
     it('should handle errors gracefully', async () => {
       mockGetToken.mockReturnValue('mockToken');
       ordersService.create.mockRejectedValue(new Error('Error creating order'));
 
-      await expect(ordersController.create('Bearer mockToken', mockAddOrder)).rejects.toEqual({
+      await expect(
+        ordersController.create('Bearer mockToken', mockAddOrder),
+      ).rejects.toEqual({
         message: 'Error creating order',
         statusCode: 400,
       });
@@ -164,14 +194,24 @@ describe('OrdersController', () => {
     it('should update the status of an order', async () => {
       ordersService.updateStatus.mockResolvedValue(mockOrder);
 
-      const result = await ordersController.updateStatus('1', { status: Status.SENT });
+      const result = await ordersController.updateStatus('1', {
+        status: Status.SENT,
+      });
 
-      expect(result).toEqual({ message: 'Order updated', data: mockOrder, statusCode: 200 });
-      expect(ordersService.updateStatus).toHaveBeenCalledWith('1', { status: Status.SENT });
+      expect(result).toEqual({
+        message: 'Order updated',
+        data: mockOrder,
+        statusCode: 200,
+      });
+      expect(ordersService.updateStatus).toHaveBeenCalledWith('1', {
+        status: Status.SENT,
+      });
     });
 
     it('should handle errors gracefully', async () => {
-      ordersService.updateStatus.mockRejectedValue(new Error('Error updating status'));
+      ordersService.updateStatus.mockRejectedValue(
+        new Error('Error updating status'),
+      );
 
       await expect(
         ordersController.updateStatus('1', { status: Status.DELIVERED }),

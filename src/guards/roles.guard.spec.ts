@@ -15,7 +15,7 @@ describe('RolesGuard', () => {
 
   const mockExecutionContext = (
     user: any,
-    requiredRoles: Role[] = []
+    requiredRoles: Role[] = [],
   ): Partial<ExecutionContext> => ({
     switchToHttp: () => ({
       getRequest: jest.fn().mockReturnValue({ user }),
@@ -32,9 +32,7 @@ describe('RolesGuard', () => {
 
       const context = mockExecutionContext({
         id: 'user-id',
-        userRoles: [
-          { role: { name: Role.ADMIN } },
-        ],
+        userRoles: [{ role: { name: Role.ADMIN } }],
       });
 
       const result = rolesGuard.canActivate(context as ExecutionContext);
@@ -51,9 +49,7 @@ describe('RolesGuard', () => {
 
       const context = mockExecutionContext({
         id: 'user-id',
-        userRoles: [
-          { role: { name: Role.ADMIN } },
-        ],
+        userRoles: [{ role: { name: Role.ADMIN } }],
       });
 
       const result = rolesGuard.canActivate(context as ExecutionContext);
@@ -70,9 +66,7 @@ describe('RolesGuard', () => {
 
       const context = mockExecutionContext({
         id: 'user-id',
-        userRoles: [
-          { role: { name: Role.ADMIN } },
-        ],
+        userRoles: [{ role: { name: Role.ADMIN } }],
       });
 
       expect(() => rolesGuard.canActivate(context as ExecutionContext)).toThrow(

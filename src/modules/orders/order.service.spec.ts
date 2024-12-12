@@ -100,7 +100,9 @@ describe('OrdersService', () => {
     it('should throw NotFoundException if order not found', async () => {
       mockOrdersRepository.findOne.mockResolvedValue(null);
 
-      await expect(ordersService.findOne('1')).rejects.toThrow(NotFoundException);
+      await expect(ordersService.findOne('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -118,7 +120,9 @@ describe('OrdersService', () => {
     });
 
     it('should throw BadRequestException if clientId is missing', async () => {
-      await expect(ordersService.findByClient('')).rejects.toThrow(BadRequestException);
+      await expect(ordersService.findByClient('')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -126,7 +130,11 @@ describe('OrdersService', () => {
     it('should create a new order', async () => {
       mockDecodeToken.mockReturnValue({ id: 'user1' });
       mockClientService.findOne.mockResolvedValue(mockOrder.client);
-      mockProductService.findOne.mockResolvedValue({ id: 'prod1', price: 50, stock: 10 });
+      mockProductService.findOne.mockResolvedValue({
+        id: 'prod1',
+        price: 50,
+        stock: 10,
+      });
       mockOrderProductsService.create.mockResolvedValue({ id: 'op1' });
       mockOrdersRepository.save.mockResolvedValue(mockOrder);
 
@@ -138,10 +146,12 @@ describe('OrdersService', () => {
 
       expect(result).toEqual(mockOrder);
       expect(mockShoppingCartService.delete).toHaveBeenCalledWith('cart1');
-      expect(mockOrdersRepository.save).toHaveBeenCalledWith(expect.objectContaining({
-        client: mockOrder.client,
-        totalPrice: 100,
-      }));
+      expect(mockOrdersRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          client: mockOrder.client,
+          totalPrice: 100,
+        }),
+      );
     });
   });
 
@@ -149,16 +159,23 @@ describe('OrdersService', () => {
     it('should update the status of an order', async () => {
       mockOrdersRepository.findOne.mockResolvedValue(mockOrder);
 
-      const result = await ordersService.updateStatus('1', { status: Status.SENT });
+      const result = await ordersService.updateStatus('1', {
+        status: Status.SENT,
+      });
 
       expect(result.status).toEqual(Status.SENT);
-      expect(mockEventEmitter.emit).toHaveBeenCalledWith('order.status.changed', expect.any(Object));
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'order.status.changed',
+        expect.any(Object),
+      );
     });
 
     it('should throw NotFoundException if order not found', async () => {
       mockOrdersRepository.findOne.mockResolvedValue(null);
 
-      await expect(ordersService.updateStatus('1', { status: Status.DELIVERED })).rejects.toThrow(NotFoundException);
+      await expect(
+        ordersService.updateStatus('1', { status: Status.DELIVERED }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 

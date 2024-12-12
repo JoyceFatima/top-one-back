@@ -27,7 +27,9 @@ describe('OrderStatusChangedListener', () => {
       ],
     }).compile();
 
-    listener = module.get<OrderStatusChangedListener>(OrderStatusChangedListener);
+    listener = module.get<OrderStatusChangedListener>(
+      OrderStatusChangedListener,
+    );
     emailService = module.get<EmailService>(EmailService);
   });
 

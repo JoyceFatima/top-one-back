@@ -30,9 +30,7 @@ describe('ProductController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductController],
-      providers: [
-        { provide: ProductService, useValue: mockProductService },
-      ],
+      providers: [{ provide: ProductService, useValue: mockProductService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -59,7 +57,9 @@ describe('ProductController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      productService.findAll.mockRejectedValue(new Error('Error retrieving products'));
+      productService.findAll.mockRejectedValue(
+        new Error('Error retrieving products'),
+      );
 
       await expect(productController.findAll()).rejects.toEqual({
         message: 'Error retrieving products',
@@ -73,18 +73,28 @@ describe('ProductController', () => {
       mockGetToken.mockReturnValue('decodedToken');
       productService.createProduct.mockResolvedValue(mockProduct);
 
-      const result = await productController.createProduct('Bearer token', mockProduct);
+      const result = await productController.createProduct(
+        'Bearer token',
+        mockProduct,
+      );
 
       expect(result).toEqual({ message: 'Product created', data: mockProduct });
       expect(mockGetToken).toHaveBeenCalledWith('Bearer token');
-      expect(productService.createProduct).toHaveBeenCalledWith('decodedToken', mockProduct);
+      expect(productService.createProduct).toHaveBeenCalledWith(
+        'decodedToken',
+        mockProduct,
+      );
     });
 
     it('should handle errors gracefully', async () => {
       mockGetToken.mockReturnValue('decodedToken');
-      productService.createProduct.mockRejectedValue(new Error('Error creating product'));
+      productService.createProduct.mockRejectedValue(
+        new Error('Error creating product'),
+      );
 
-      await expect(productController.createProduct('Bearer token', mockProduct)).rejects.toEqual({
+      await expect(
+        productController.createProduct('Bearer token', mockProduct),
+      ).rejects.toEqual({
         message: 'Error creating product',
         statusCode: 400,
       });
@@ -95,16 +105,25 @@ describe('ProductController', () => {
     it('should update a product', async () => {
       productService.updateProduct.mockResolvedValue(mockProduct);
 
-      const result = await productController.updateProduct('1', { name: 'Updated Product' });
+      const result = await productController.updateProduct('1', {
+        name: 'Updated Product',
+      });
 
       expect(result).toEqual({ message: 'Product updated', data: mockProduct });
-      expect(productService.updateProduct).toHaveBeenCalledWith({ name: 'Updated Product' }, '1');
+      expect(productService.updateProduct).toHaveBeenCalledWith(
+        { name: 'Updated Product' },
+        '1',
+      );
     });
 
     it('should handle errors gracefully', async () => {
-      productService.updateProduct.mockRejectedValue(new Error('Error updating product'));
+      productService.updateProduct.mockRejectedValue(
+        new Error('Error updating product'),
+      );
 
-      await expect(productController.updateProduct('1', { name: 'Updated Product' })).rejects.toEqual({
+      await expect(
+        productController.updateProduct('1', { name: 'Updated Product' }),
+      ).rejects.toEqual({
         message: 'Error updating product',
         statusCode: 400,
       });
@@ -113,16 +132,24 @@ describe('ProductController', () => {
 
   describe('applyDiscount', () => {
     it('should apply a discount to a product', async () => {
-      productService.applyDiscount.mockResolvedValue({ ...mockProduct, discount: 20 });
+      productService.applyDiscount.mockResolvedValue({
+        ...mockProduct,
+        discount: 20,
+      });
 
       const result = await productController.applyDiscount('1', 20);
 
-      expect(result).toEqual({ message: 'Discount applied', data: { ...mockProduct, discount: 20 } });
+      expect(result).toEqual({
+        message: 'Discount applied',
+        data: { ...mockProduct, discount: 20 },
+      });
       expect(productService.applyDiscount).toHaveBeenCalledWith('1', 20);
     });
 
     it('should handle errors gracefully', async () => {
-      productService.applyDiscount.mockRejectedValue(new Error('Error applying discount'));
+      productService.applyDiscount.mockRejectedValue(
+        new Error('Error applying discount'),
+      );
 
       await expect(productController.applyDiscount('1', 20)).rejects.toEqual({
         message: 'Error applying discount',
@@ -142,7 +169,9 @@ describe('ProductController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      productService.deleteProduct.mockRejectedValue(new Error('Error deleting product'));
+      productService.deleteProduct.mockRejectedValue(
+        new Error('Error deleting product'),
+      );
 
       await expect(productController.deleteProduct('1')).rejects.toEqual({
         message: 'Error deleting product',

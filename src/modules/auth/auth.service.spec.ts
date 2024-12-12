@@ -5,10 +5,7 @@ import {
   generateToken,
   isTokenExpired,
 } from '@/utils/funcs';
-import {
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
@@ -80,7 +77,11 @@ describe('AuthService', () => {
     });
 
     it('should return a token and user on successful login', async () => {
-      const user = { id: 1, email: 'test@example.com', password: 'hashedPassword' };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'hashedPassword',
+      };
       (usersService.findOne as jest.Mock).mockResolvedValue(user);
       (decryptPassword as jest.Mock).mockReturnValue(true);
       (generateToken as jest.Mock).mockReturnValue('token');

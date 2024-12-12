@@ -20,9 +20,7 @@ describe('RolesController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RolesController],
-      providers: [
-        { provide: RolesService, useValue: mockRolesService },
-      ],
+      providers: [{ provide: RolesService, useValue: mockRolesService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -71,7 +69,9 @@ describe('RolesController', () => {
     it('should handle errors gracefully', async () => {
       rolesService.insert.mockRejectedValue(new Error('Error creating role'));
 
-      await expect(rolesController.createRole({ role: Role.ADMIN })).rejects.toEqual({
+      await expect(
+        rolesController.createRole({ role: Role.ADMIN }),
+      ).rejects.toEqual({
         message: 'Error creating role',
         statusCode: 400,
       });
@@ -89,7 +89,9 @@ describe('RolesController', () => {
     });
 
     it('should handle NotFoundException gracefully', async () => {
-      rolesService.delete.mockRejectedValue(new NotFoundException('Role not found'));
+      rolesService.delete.mockRejectedValue(
+        new NotFoundException('Role not found'),
+      );
 
       await expect(rolesController.deleteRole('1')).rejects.toEqual({
         message: 'Role not found',

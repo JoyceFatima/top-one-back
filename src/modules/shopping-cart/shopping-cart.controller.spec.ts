@@ -5,10 +5,10 @@ import { ShoppingCartController } from './shopping-cart.controller';
 import { ShoppingCartService } from './shopping-cart.service';
 
 const mockAddCartData: IShoppingCart = {
-    clientId: 'id',
-    productId: 'id',
-    quantity: 2,
-  }
+  clientId: 'id',
+  productId: 'id',
+  quantity: 2,
+};
 
 const mockCartData: ShoppingCart = {
   id: '1',
@@ -41,7 +41,7 @@ const mockCartData: ShoppingCart = {
         product: null,
         order: null,
         quantity: 2,
-      }
+      },
     ],
     shoppingCart: [
       {
@@ -59,8 +59,8 @@ const mockCartData: ShoppingCart = {
           id: 'id',
           name: 'name',
           phone: 'phone',
-        }
-      }
+        },
+      },
     ],
     user: {
       id: 'userId',
@@ -75,9 +75,8 @@ const mockCartData: ShoppingCart = {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  }
+  },
 };
-
 
 describe('ShoppingCartController', () => {
   let shoppingCartController: ShoppingCartController;
@@ -99,13 +98,17 @@ describe('ShoppingCartController', () => {
       ],
     }).compile();
 
-    shoppingCartController = module.get<ShoppingCartController>(ShoppingCartController);
+    shoppingCartController = module.get<ShoppingCartController>(
+      ShoppingCartController,
+    );
     shoppingCartService = module.get<ShoppingCartService>(ShoppingCartService);
   });
 
   describe('findAll', () => {
     it('should return all items in the cart', async () => {
-      jest.spyOn(shoppingCartService, 'findAll').mockResolvedValue([mockCartData]);
+      jest
+        .spyOn(shoppingCartService, 'findAll')
+        .mockResolvedValue([mockCartData]);
 
       const result = await shoppingCartController.findAll();
 
@@ -114,9 +117,13 @@ describe('ShoppingCartController', () => {
     });
 
     it('should handle errors', async () => {
-      jest.spyOn(shoppingCartService, 'findAll').mockRejectedValue(new Error('Database error'));
+      jest
+        .spyOn(shoppingCartService, 'findAll')
+        .mockRejectedValue(new Error('Database error'));
 
-      await expect(shoppingCartController.findAll()).rejects.toThrow('Database error');
+      await expect(shoppingCartController.findAll()).rejects.toThrow(
+        'Database error',
+      );
 
       expect(shoppingCartService.findAll).toHaveBeenCalled();
     });
@@ -124,12 +131,18 @@ describe('ShoppingCartController', () => {
 
   describe('addToCart', () => {
     it('should add an item to the cart and return updated cart', async () => {
-      jest.spyOn(shoppingCartService, 'addToCart').mockResolvedValue(mockCartData);
-      jest.spyOn(shoppingCartService, 'findAll').mockResolvedValue([mockCartData]);
+      jest
+        .spyOn(shoppingCartService, 'addToCart')
+        .mockResolvedValue(mockCartData);
+      jest
+        .spyOn(shoppingCartService, 'findAll')
+        .mockResolvedValue([mockCartData]);
 
       const result = await shoppingCartController.addToCart(mockAddCartData);
 
-      expect(shoppingCartService.addToCart).toHaveBeenCalledWith(mockAddCartData);
+      expect(shoppingCartService.addToCart).toHaveBeenCalledWith(
+        mockAddCartData,
+      );
       expect(shoppingCartService.findAll).toHaveBeenCalled();
       expect(result).toEqual({
         message: 'Added to cart',
@@ -138,11 +151,17 @@ describe('ShoppingCartController', () => {
     });
 
     it('should handle errors', async () => {
-      jest.spyOn(shoppingCartService, 'addToCart').mockRejectedValue(new Error('Add error'));
+      jest
+        .spyOn(shoppingCartService, 'addToCart')
+        .mockRejectedValue(new Error('Add error'));
 
-      await expect(shoppingCartController.addToCart(mockAddCartData)).rejects.toThrow('Add error');
+      await expect(
+        shoppingCartController.addToCart(mockAddCartData),
+      ).rejects.toThrow('Add error');
 
-      expect(shoppingCartService.addToCart).toHaveBeenCalledWith(mockAddCartData);
+      expect(shoppingCartService.addToCart).toHaveBeenCalledWith(
+        mockAddCartData,
+      );
     });
   });
 
@@ -154,7 +173,10 @@ describe('ShoppingCartController', () => {
         ...updatedCartData,
       });
 
-      const result = await shoppingCartController.updateCartItem(mockCartData.id, updatedCartData);
+      const result = await shoppingCartController.updateCartItem(
+        mockCartData.id,
+        updatedCartData,
+      );
 
       expect(shoppingCartService.updateCartItem).toHaveBeenCalledWith(
         mockCartData.id,
@@ -167,15 +189,20 @@ describe('ShoppingCartController', () => {
     });
 
     it('should handle errors', async () => {
-      jest.spyOn(shoppingCartService, 'updateCartItem').mockRejectedValue(new Error('Update error'));
+      jest
+        .spyOn(shoppingCartService, 'updateCartItem')
+        .mockRejectedValue(new Error('Update error'));
 
       await expect(
         shoppingCartController.updateCartItem(mockCartData.id, { quantity: 5 }),
       ).rejects.toThrow('Update error');
 
-      expect(shoppingCartService.updateCartItem).toHaveBeenCalledWith(mockCartData.id, {
-        quantity: 5,
-      });
+      expect(shoppingCartService.updateCartItem).toHaveBeenCalledWith(
+        mockCartData.id,
+        {
+          quantity: 5,
+        },
+      );
     });
   });
 
@@ -190,9 +217,13 @@ describe('ShoppingCartController', () => {
     });
 
     it('should handle errors', async () => {
-      jest.spyOn(shoppingCartService, 'delete').mockRejectedValue(new Error('Delete error'));
+      jest
+        .spyOn(shoppingCartService, 'delete')
+        .mockRejectedValue(new Error('Delete error'));
 
-      await expect(shoppingCartController.delete(mockCartData.id)).rejects.toThrow('Delete error');
+      await expect(
+        shoppingCartController.delete(mockCartData.id),
+      ).rejects.toThrow('Delete error');
 
       expect(shoppingCartService.delete).toHaveBeenCalledWith(mockCartData.id);
     });

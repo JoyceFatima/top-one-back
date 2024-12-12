@@ -12,7 +12,7 @@ const mockClient = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: new Date(),
-}
+};
 
 jest.mock('./clients.service');
 
@@ -52,7 +52,9 @@ describe('ClientsController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      clientsService.find.mockRejectedValue(new Error('Error fetching clients'));
+      clientsService.find.mockRejectedValue(
+        new Error('Error fetching clients'),
+      );
 
       await expect(clientsController.findAll()).rejects.toEqual({
         message: 'Error fetching clients',
@@ -100,7 +102,9 @@ describe('ClientsController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      clientsService.insert.mockRejectedValue(new Error('Error creating client'));
+      clientsService.insert.mockRejectedValue(
+        new Error('Error creating client'),
+      );
 
       await expect(clientsController.create(mockClient)).rejects.toEqual({
         message: 'Error creating client',
@@ -113,7 +117,9 @@ describe('ClientsController', () => {
     it('should update a client by id', async () => {
       clientsService.update.mockResolvedValue(undefined);
 
-      const result = await clientsController.update('1', { name: 'Updated Name' });
+      const result = await clientsController.update('1', {
+        name: 'Updated Name',
+      });
 
       expect(result).toEqual({
         message: 'Client updated successfully',
@@ -125,7 +131,9 @@ describe('ClientsController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      clientsService.update.mockRejectedValue(new Error('Error updating client'));
+      clientsService.update.mockRejectedValue(
+        new Error('Error updating client'),
+      );
 
       await expect(
         clientsController.update('1', { name: 'Updated Name' }),
@@ -150,7 +158,9 @@ describe('ClientsController', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      clientsService.delete.mockRejectedValue(new Error('Error deleting client'));
+      clientsService.delete.mockRejectedValue(
+        new Error('Error deleting client'),
+      );
 
       await expect(clientsController.remove('1')).rejects.toEqual({
         message: 'Error deleting client',

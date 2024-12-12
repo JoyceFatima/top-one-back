@@ -12,13 +12,16 @@ describe('AuthGuard', () => {
     authGuard = new AuthGuard();
   });
 
-  const mockExecutionContext = (authHeader: string | undefined): Partial<ExecutionContext> => ({
-    switchToHttp: () => ({
-      getRequest: jest.fn().mockReturnValue({
-        headers: { authorization: authHeader },
+  const mockExecutionContext = (
+    authHeader: string | undefined,
+  ): Partial<ExecutionContext> =>
+    ({
+      switchToHttp: () => ({
+        getRequest: jest.fn().mockReturnValue({
+          headers: { authorization: authHeader },
+        }),
       }),
-    }),
-  } as any);
+    }) as any;
 
   describe('canActivate', () => {
     it('should throw an error if Authorization header is missing', () => {
@@ -48,7 +51,7 @@ describe('AuthGuard', () => {
       expect(mockVerifyToken).toHaveBeenCalledWith('validToken');
 
       const request = context.switchToHttp().getRequest();
-      expect(request.user).toBeUndefined()
+      expect(request.user).toBeUndefined();
     });
 
     it('should throw an error if token validation fails', async () => {
@@ -56,7 +59,9 @@ describe('AuthGuard', () => {
 
       const context = mockExecutionContext('Bearer invalidToken');
 
-      await expect(authGuard.canActivate(context as ExecutionContext)).rejects.toThrow(
+      await expect(
+        authGuard.canActivate(context as ExecutionContext),
+      ).rejects.toThrow(
         new UnauthorizedException('Token validation error: Invalid token'),
       );
     });
@@ -66,7 +71,9 @@ describe('AuthGuard', () => {
 
       const context = mockExecutionContext('Bearer nullToken');
 
-      await expect(authGuard.canActivate(context as ExecutionContext)).rejects.toThrow(
+      await expect(
+        authGuard.canActivate(context as ExecutionContext),
+      ).rejects.toThrow(
         new UnauthorizedException('Token validation error: Invalid token'),
       );
     });

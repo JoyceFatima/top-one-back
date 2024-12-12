@@ -1,7 +1,15 @@
 import { config } from '@/config';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { decodeToken, decryptPassword, encryptPassword, generateToken, getToken, isTokenExpired, verifyToken } from './security.funcs';
+import {
+  decodeToken,
+  decryptPassword,
+  encryptPassword,
+  generateToken,
+  getToken,
+  isTokenExpired,
+  verifyToken,
+} from './security.funcs';
 
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
@@ -29,7 +37,10 @@ describe('Auth Utils', () => {
 
       const result = encryptPassword(password);
 
-      expect(bcrypt.hashSync).toHaveBeenCalledWith(password, parseInt(config.secutiy.bcryptSalt));
+      expect(bcrypt.hashSync).toHaveBeenCalledWith(
+        password,
+        parseInt(config.secutiy.bcryptSalt),
+      );
       expect(result).toBe(hash);
     });
   });
@@ -66,7 +77,11 @@ describe('Auth Utils', () => {
 
       const result = generateToken(mockUser);
 
-      expect(jwt.sign).toHaveBeenCalledWith(mockUser, config.secutiy.jwtSecret, { expiresIn: config.secutiy.jwtExpire });
+      expect(jwt.sign).toHaveBeenCalledWith(
+        mockUser,
+        config.secutiy.jwtSecret,
+        { expiresIn: config.secutiy.jwtExpire },
+      );
       expect(result).toBe(mockToken);
     });
   });
@@ -88,7 +103,10 @@ describe('Auth Utils', () => {
 
       const result = verifyToken(mockToken);
 
-      expect(jwt.verify).toHaveBeenCalledWith(mockToken, config.secutiy.jwtSecret);
+      expect(jwt.verify).toHaveBeenCalledWith(
+        mockToken,
+        config.secutiy.jwtSecret,
+      );
       expect(result).toEqual(mockDecodedToken);
     });
   });

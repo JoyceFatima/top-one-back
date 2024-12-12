@@ -46,7 +46,9 @@ describe('RolesService', () => {
       const result = await rolesService.find();
 
       expect(result).toEqual([mockRole]);
-      expect(mockRolesRepository.find).toHaveBeenCalledWith({ where: undefined });
+      expect(mockRolesRepository.find).toHaveBeenCalledWith({
+        where: undefined,
+      });
     });
 
     it('should return roles based on filter criteria', async () => {
@@ -83,7 +85,9 @@ describe('RolesService', () => {
 
       await rolesService.delete('1');
 
-      expect(mockRolesRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockRolesRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(mockRolesRepository.delete).toHaveBeenCalledWith('1');
     });
 

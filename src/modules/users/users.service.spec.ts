@@ -64,13 +64,17 @@ describe('UsersService', () => {
       const result = await usersService.find({ email: 'test@example.com' });
 
       expect(result).toEqual([mockUser]);
-      expect(mockUsersRepository.find).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
+      expect(mockUsersRepository.find).toHaveBeenCalledWith({
+        where: { email: 'test@example.com' },
+      });
     });
 
     it('should throw InternalServerErrorException on error', async () => {
       mockUsersRepository.find.mockRejectedValue(new Error('Database error'));
 
-      await expect(usersService.find({})).rejects.toThrow(InternalServerErrorException);
+      await expect(usersService.find({})).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -81,13 +85,19 @@ describe('UsersService', () => {
       const result = await usersService.findOne({ id: '1' });
 
       expect(result).toEqual(mockUser);
-      expect(mockUsersRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
     });
 
     it('should throw InternalServerErrorException on error', async () => {
-      mockUsersRepository.findOne.mockRejectedValue(new Error('Database error'));
+      mockUsersRepository.findOne.mockRejectedValue(
+        new Error('Database error'),
+      );
 
-      await expect(usersService.findOne({ id: '1' })).rejects.toThrow(InternalServerErrorException);
+      await expect(usersService.findOne({ id: '1' })).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -98,7 +108,10 @@ describe('UsersService', () => {
       mockEncryptPassword.mockReturnValue('hashedPassword');
       mockUsersRepository.save.mockResolvedValue(mockUser);
 
-      const result = await usersService.insert({ email: 'test@example.com', password: 'password' }, Role.ADMIN);
+      const result = await usersService.insert(
+        { email: 'test@example.com', password: 'password' },
+        Role.ADMIN,
+      );
 
       expect(result).toEqual(mockUser);
       expect(mockRolesService.find).toHaveBeenCalledWith({ name: Role.ADMIN });
@@ -108,7 +121,7 @@ describe('UsersService', () => {
         role: { id: 'role1', name: 'Admin' },
       });
     });
-    
+
     it('should throw an error if password is not provided', async () => {
       mockUsersRepository.findOne.mockResolvedValue(null);
       mockRolesService.find.mockResolvedValue([{ id: 'role1', name: 'Admin' }]);
@@ -131,7 +144,10 @@ describe('UsersService', () => {
       mockRolesService.find.mockResolvedValue([]);
 
       await expect(
-        usersService.insert({ email: 'test@example.com', password: 'password' }, Role.ADMIN),
+        usersService.insert(
+          { email: 'test@example.com', password: 'password' },
+          Role.ADMIN,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -140,7 +156,9 @@ describe('UsersService', () => {
     it('should insert a new user if no user exists', async () => {
       mockUsersRepository.find.mockResolvedValue([]);
       const mockData = { email: 'new@example.com', password: 'newPassword' };
-      const mockInsert = jest.spyOn(usersService, 'insert').mockResolvedValue(mockUser as any);
+      const mockInsert = jest
+        .spyOn(usersService, 'insert')
+        .mockResolvedValue(mockUser as any);
 
       await usersService.upsert(mockData as User);
 
@@ -149,7 +167,10 @@ describe('UsersService', () => {
 
     it('should update an existing user if user exists', async () => {
       mockUsersRepository.find.mockResolvedValue([mockUser]);
-      const mockData = { email: 'updated@example.com', password: 'updatedPassword' };
+      const mockData = {
+        email: 'updated@example.com',
+        password: 'updatedPassword',
+      };
 
       await usersService.upsert(mockData as User, '1');
 
@@ -171,7 +192,9 @@ describe('UsersService', () => {
     it('should throw NotFoundException if user not found', async () => {
       mockUsersRepository.find.mockResolvedValue([]);
 
-      await expect(usersService.update('1', { email: 'updated@example.com' })).rejects.toThrow(NotFoundException);
+      await expect(
+        usersService.update('1', { email: 'updated@example.com' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -181,7 +204,10 @@ describe('UsersService', () => {
       mockDecryptPassword.mockReturnValue(true);
       mockEncryptPassword.mockReturnValue('newHashedPassword');
 
-      await usersService.changePassword('1', { password: 'oldPassword', newPassword: 'newPassword' });
+      await usersService.changePassword('1', {
+        password: 'oldPassword',
+        newPassword: 'newPassword',
+      });
 
       expect(mockUsersRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({ password: 'newHashedPassword' }),
@@ -192,7 +218,10 @@ describe('UsersService', () => {
       mockUsersRepository.findOne.mockResolvedValue(null);
 
       await expect(
-        usersService.changePassword('1', { password: 'oldPassword', newPassword: 'newPassword' }),
+        usersService.changePassword('1', {
+          password: 'oldPassword',
+          newPassword: 'newPassword',
+        }),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -201,7 +230,10 @@ describe('UsersService', () => {
       mockDecryptPassword.mockReturnValue(false);
 
       await expect(
-        usersService.changePassword('1', { password: 'wrongPassword', newPassword: 'newPassword' }),
+        usersService.changePassword('1', {
+          password: 'wrongPassword',
+          newPassword: 'newPassword',
+        }),
       ).rejects.toThrow(BadRequestException);
     });
   });

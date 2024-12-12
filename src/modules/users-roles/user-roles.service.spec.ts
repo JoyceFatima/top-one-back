@@ -61,7 +61,10 @@ describe('UsersRolesService', () => {
 
       const result = await service.find();
 
-      expect(repository.find).toHaveBeenCalledWith({ where: undefined, relations: [] });
+      expect(repository.find).toHaveBeenCalledWith({
+        where: undefined,
+        relations: [],
+      });
       expect(result).toEqual([mockUserRole]);
     });
 
@@ -79,7 +82,7 @@ describe('UsersRolesService', () => {
           deletedAt: null,
         } as RoleEntity,
       };
-      
+
       const relations = ['users'];
       jest.spyOn(repository, 'find').mockResolvedValue([mockUserRole]);
 
@@ -94,25 +97,29 @@ describe('UsersRolesService', () => {
     it('should insert a new user role and return it', async () => {
       jest.spyOn(repository, 'save').mockResolvedValue(mockUserRole);
 
-      const result = await service.insert({ role: {
-        id: '1',
-        name: Role.ADMIN,
-        description: 'Admin role',
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      }});
+      const result = await service.insert({
+        role: {
+          id: '1',
+          name: Role.ADMIN,
+          description: 'Admin role',
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      });
 
-      expect(repository.save).toHaveBeenCalledWith({role: {
-        id: '1',
-        name: Role.ADMIN,
-        description: 'Admin role',
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      }});
+      expect(repository.save).toHaveBeenCalledWith({
+        role: {
+          id: '1',
+          name: Role.ADMIN,
+          description: 'Admin role',
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
+      });
       expect(result).toEqual(mockUserRole);
     });
   });
@@ -124,16 +131,22 @@ describe('UsersRolesService', () => {
 
       await service.delete(mockUserRole.id);
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: mockUserRole.id } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: mockUserRole.id },
+      });
       expect(repository.delete).toHaveBeenCalledWith(mockUserRole.id);
     });
 
     it('should throw NotFoundException if the user role is not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.delete('invalid-id')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('invalid-id')).rejects.toThrow(
+        NotFoundException,
+      );
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: 'invalid-id' } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: 'invalid-id' },
+      });
       expect(repository.delete).not.toHaveBeenCalled();
     });
   });

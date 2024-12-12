@@ -29,9 +29,7 @@ describe('UsersController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [
-        { provide: UsersService, useValue: mockUsersService },
-      ],
+      providers: [{ provide: UsersService, useValue: mockUsersService }],
     })
       .overrideGuard(AuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
@@ -53,7 +51,11 @@ describe('UsersController', () => {
 
       const result = await usersController.findAll();
 
-      expect(result).toEqual({ message: 'Success', data: [mockUser], statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: [mockUser],
+        statusCode: 200,
+      });
       expect(usersService.find).toHaveBeenCalledWith({});
     });
 
@@ -73,7 +75,11 @@ describe('UsersController', () => {
 
       const result = await usersController.findOne('1');
 
-      expect(result).toEqual({ message: 'Success', data: mockUser, statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: mockUser,
+        statusCode: 200,
+      });
       expect(usersService.findOne).toHaveBeenCalledWith({ id: '1' });
     });
 
@@ -93,7 +99,11 @@ describe('UsersController', () => {
 
       const result = await usersController.create(mockUser);
 
-      expect(result).toEqual({ message: 'Success', data: mockUser, statusCode: 201 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: mockUser,
+        statusCode: 201,
+      });
       expect(usersService.insert).toHaveBeenCalledWith(mockUser, mockUser.role);
     });
 
@@ -113,14 +123,20 @@ describe('UsersController', () => {
 
       const result = await usersController.upsert(mockUser as any, '1');
 
-      expect(result).toEqual({ message: 'Success', data: undefined, statusCode: 200 });
+      expect(result).toEqual({
+        message: 'Success',
+        data: undefined,
+        statusCode: 200,
+      });
       expect(usersService.upsert).toHaveBeenCalledWith(mockUser, '1');
     });
 
     it('should handle errors gracefully', async () => {
       usersService.upsert.mockRejectedValue(new Error('Error upserting user'));
 
-      await expect(usersController.upsert(mockUser as any, '1')).rejects.toEqual({
+      await expect(
+        usersController.upsert(mockUser as any, '1'),
+      ).rejects.toEqual({
         message: 'Error upserting user',
         statusCode: 400,
       });
@@ -131,16 +147,22 @@ describe('UsersController', () => {
     it('should update a user', async () => {
       usersService.update.mockResolvedValue(undefined);
 
-      const result = await usersController.update('1', { email: 'updated@example.com' });
+      const result = await usersController.update('1', {
+        email: 'updated@example.com',
+      });
 
       expect(result).toEqual({ message: 'Updated', statusCode: 200 });
-      expect(usersService.update).toHaveBeenCalledWith('1', { email: 'updated@example.com' });
+      expect(usersService.update).toHaveBeenCalledWith('1', {
+        email: 'updated@example.com',
+      });
     });
 
     it('should handle errors gracefully', async () => {
       usersService.update.mockRejectedValue(new Error('Error updating user'));
 
-      await expect(usersController.update('1', { email: 'updated@example.com' })).rejects.toEqual({
+      await expect(
+        usersController.update('1', { email: 'updated@example.com' }),
+      ).rejects.toEqual({
         message: 'Error updating user',
         statusCode: 400,
       });
@@ -151,16 +173,32 @@ describe('UsersController', () => {
     it('should change a user password', async () => {
       usersService.changePassword.mockResolvedValue(undefined);
 
-      const result = await usersController.changePassword('1', { password: 'oldPassword', newPassword: 'newPassword' });
+      const result = await usersController.changePassword('1', {
+        password: 'oldPassword',
+        newPassword: 'newPassword',
+      });
 
-      expect(result).toEqual({ message: 'Password updated successfully', statusCode: 200 });
-      expect(usersService.changePassword).toHaveBeenCalledWith('1', { password: 'oldPassword', newPassword: 'newPassword' });
+      expect(result).toEqual({
+        message: 'Password updated successfully',
+        statusCode: 200,
+      });
+      expect(usersService.changePassword).toHaveBeenCalledWith('1', {
+        password: 'oldPassword',
+        newPassword: 'newPassword',
+      });
     });
 
     it('should handle errors gracefully', async () => {
-      usersService.changePassword.mockRejectedValue(new Error('Error changing password'));
+      usersService.changePassword.mockRejectedValue(
+        new Error('Error changing password'),
+      );
 
-      await expect(usersController.changePassword('1', { password: 'oldPassword', newPassword: 'newPassword' })).rejects.toEqual({
+      await expect(
+        usersController.changePassword('1', {
+          password: 'oldPassword',
+          newPassword: 'newPassword',
+        }),
+      ).rejects.toEqual({
         message: 'Error changing password',
         statusCode: 400,
       });

@@ -13,7 +13,7 @@ const mockClient = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: new Date(),
-}
+};
 
 const mockClientsRepository = {
   find: jest.fn(),
@@ -54,7 +54,10 @@ describe('ClientsService', () => {
       const result = await clientsService.find();
 
       expect(result).toEqual([mockClient]);
-      expect(clientsRepository.find).toHaveBeenCalledWith({ where: undefined, relations: [] });
+      expect(clientsRepository.find).toHaveBeenCalledWith({
+        where: undefined,
+        relations: [],
+      });
     });
   });
 
@@ -65,13 +68,18 @@ describe('ClientsService', () => {
       const result = await clientsService.findOne({ id: '1' });
 
       expect(result).toEqual(mockClient);
-      expect(clientsRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' }, relations: [] });
+      expect(clientsRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+        relations: [],
+      });
     });
 
     it('should throw a NotFoundException if the client is not found', async () => {
       clientsRepository.findOne.mockResolvedValue(null);
 
-      await expect(clientsService.findOne({ id: '1' })).rejects.toThrow(NotFoundException);
+      await expect(clientsService.findOne({ id: '1' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -81,10 +89,15 @@ describe('ClientsService', () => {
       clientsRepository.create.mockReturnValue(mockClient);
       clientsRepository.save.mockResolvedValue(mockClient);
 
-      const result = await clientsService.insert({ email: 'test@example.com', name: 'Test Client' });
+      const result = await clientsService.insert({
+        email: 'test@example.com',
+        name: 'Test Client',
+      });
 
       expect(result).toEqual(mockClient);
-      expect(clientsRepository.findOne).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
+      expect(clientsRepository.findOne).toHaveBeenCalledWith({
+        where: { email: 'test@example.com' },
+      });
       expect(clientsRepository.create).toHaveBeenCalledWith({
         email: 'test@example.com',
         name: 'Test Client',
@@ -98,7 +111,10 @@ describe('ClientsService', () => {
       clientsRepository.findOne.mockResolvedValue(mockClient);
 
       await expect(
-        clientsService.insert({ email: 'test@example.com', name: 'Test Client' }),
+        clientsService.insert({
+          email: 'test@example.com',
+          name: 'Test Client',
+        }),
       ).rejects.toThrowError('Client already exists');
     });
   });
@@ -110,7 +126,9 @@ describe('ClientsService', () => {
 
       await clientsService.update('1', { name: 'Updated Name' });
 
-      expect(clientsRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(clientsRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(clientsRepository.update).toHaveBeenCalledWith('1', {
         name: 'Updated Name',
         updatedAt: expect.any(Date),
@@ -120,7 +138,9 @@ describe('ClientsService', () => {
     it('should throw a NotFoundException if the client does not exist', async () => {
       clientsRepository.findOne.mockResolvedValue(null);
 
-      await expect(clientsService.update('1', { name: 'Updated Name' })).rejects.toThrow(NotFoundException);
+      await expect(
+        clientsService.update('1', { name: 'Updated Name' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -131,14 +151,18 @@ describe('ClientsService', () => {
 
       await clientsService.delete('1');
 
-      expect(clientsRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(clientsRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(clientsRepository.delete).toHaveBeenCalledWith('1');
     });
 
     it('should throw a NotFoundException if the client does not exist', async () => {
       clientsRepository.findOne.mockResolvedValue(null);
 
-      await expect(clientsService.delete('1')).rejects.toThrow(NotFoundException);
+      await expect(clientsService.delete('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

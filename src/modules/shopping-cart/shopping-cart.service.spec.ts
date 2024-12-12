@@ -32,7 +32,10 @@ describe('ShoppingCartService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShoppingCartService,
-        { provide: getRepositoryToken(ShoppingCart), useValue: mockShoppingCartRepository },
+        {
+          provide: getRepositoryToken(ShoppingCart),
+          useValue: mockShoppingCartRepository,
+        },
         { provide: ClientsService, useValue: mockClientService },
         { provide: ProductService, useValue: mockProductService },
       ],
@@ -105,7 +108,11 @@ describe('ShoppingCartService', () => {
       mockClientService.findOne.mockResolvedValue(null);
 
       await expect(
-        shoppingCartService.addToCart({ clientId: '1', productId: '1', quantity: 2 }),
+        shoppingCartService.addToCart({
+          clientId: '1',
+          productId: '1',
+          quantity: 2,
+        }),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -114,7 +121,11 @@ describe('ShoppingCartService', () => {
       mockProductService.findOne.mockResolvedValue(null);
 
       await expect(
-        shoppingCartService.addToCart({ clientId: '1', productId: '1', quantity: 2 }),
+        shoppingCartService.addToCart({
+          clientId: '1',
+          productId: '1',
+          quantity: 2,
+        }),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -127,7 +138,9 @@ describe('ShoppingCartService', () => {
         quantity: 5,
       });
 
-      const result = await shoppingCartService.updateCartItem('1', { quantity: 5 });
+      const result = await shoppingCartService.updateCartItem('1', {
+        quantity: 5,
+      });
 
       expect(result.quantity).toEqual(5);
       expect(mockShoppingCartRepository.save).toHaveBeenCalledWith(
@@ -151,14 +164,18 @@ describe('ShoppingCartService', () => {
 
       await shoppingCartService.delete('1');
 
-      expect(mockShoppingCartRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockShoppingCartRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
       expect(mockShoppingCartRepository.delete).toHaveBeenCalledWith('1');
     });
 
     it('should throw NotFoundException if item not found', async () => {
       mockShoppingCartRepository.findOne.mockResolvedValue(null);
 
-      await expect(shoppingCartService.delete('1')).rejects.toThrow(NotFoundException);
+      await expect(shoppingCartService.delete('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

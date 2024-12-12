@@ -30,7 +30,10 @@ describe('ProductService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductService,
-        { provide: getRepositoryToken(Product), useValue: mockProductRepository },
+        {
+          provide: getRepositoryToken(Product),
+          useValue: mockProductRepository,
+        },
       ],
     }).compile();
 
@@ -59,13 +62,17 @@ describe('ProductService', () => {
       const result = await productService.findOne('1');
 
       expect(result).toEqual(mockProduct);
-      expect(mockProductRepository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
+      expect(mockProductRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
     });
 
     it('should throw NotFoundException if product not found', async () => {
       mockProductRepository.findOne.mockResolvedValue(null);
 
-      await expect(productService.findOne('1')).rejects.toThrow(NotFoundException);
+      await expect(productService.findOne('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -108,18 +115,28 @@ describe('ProductService', () => {
     it('should update a product', async () => {
       mockProductRepository.findOne.mockResolvedValue(mockProduct);
       mockProductRepository.update.mockResolvedValue(undefined);
-      mockProductRepository.findOne.mockResolvedValue({ ...mockProduct, name: 'Updated Product' });
+      mockProductRepository.findOne.mockResolvedValue({
+        ...mockProduct,
+        name: 'Updated Product',
+      });
 
-      const result = await productService.update({ name: 'Updated Product' }, '1');
+      const result = await productService.update(
+        { name: 'Updated Product' },
+        '1',
+      );
 
       expect(result.name).toEqual('Updated Product');
-      expect(mockProductRepository.update).toHaveBeenCalledWith('1', { name: 'Updated Product' });
+      expect(mockProductRepository.update).toHaveBeenCalledWith('1', {
+        name: 'Updated Product',
+      });
     });
 
     it('should throw NotFoundException if product not found', async () => {
       mockProductRepository.findOne.mockResolvedValue(null);
 
-      await expect(productService.update({ name: 'Updated Product' }, '1')).rejects.toThrow(NotFoundException);
+      await expect(
+        productService.update({ name: 'Updated Product' }, '1'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -143,9 +160,15 @@ describe('ProductService', () => {
     it('should update a product without modifying discount', async () => {
       mockProductRepository.findOne.mockResolvedValue(mockProduct);
       mockProductRepository.update.mockResolvedValue(undefined);
-      mockProductRepository.findOne.mockResolvedValue({ ...mockProduct, name: 'Updated Product' });
+      mockProductRepository.findOne.mockResolvedValue({
+        ...mockProduct,
+        name: 'Updated Product',
+      });
 
-      const result = await productService.updateProduct({ name: 'Updated Product' }, '1');
+      const result = await productService.updateProduct(
+        { name: 'Updated Product' },
+        '1',
+      );
 
       expect(result.name).toEqual('Updated Product');
     });
@@ -163,14 +186,19 @@ describe('ProductService', () => {
     it('should throw NotFoundException if product not found', async () => {
       mockProductRepository.findOne.mockResolvedValue(null);
 
-      await expect(productService.deleteProduct('1')).rejects.toThrow(NotFoundException);
+      await expect(productService.deleteProduct('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('applyDiscount', () => {
     it('should apply a discount to a product', async () => {
       mockProductRepository.findOne.mockResolvedValue(mockProduct);
-      mockProductRepository.save.mockResolvedValue({ ...mockProduct, discount: 20 });
+      mockProductRepository.save.mockResolvedValue({
+        ...mockProduct,
+        discount: 20,
+      });
 
       const result = await productService.applyDiscount('1', 20);
 
@@ -183,13 +211,17 @@ describe('ProductService', () => {
     it('should throw BadRequestException for invalid discount', async () => {
       mockProductRepository.findOne.mockResolvedValue(mockProduct);
 
-      await expect(productService.applyDiscount('1', 200)).rejects.toThrow(BadRequestException);
+      await expect(productService.applyDiscount('1', 200)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw NotFoundException if product not found', async () => {
       mockProductRepository.findOne.mockResolvedValue(null);
 
-      await expect(productService.applyDiscount('1', 20)).rejects.toThrow(NotFoundException);
+      await expect(productService.applyDiscount('1', 20)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

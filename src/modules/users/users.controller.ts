@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -28,9 +27,9 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async findAll(@Query('relations') relations?: string[]) {
+  async findAll() {
     try {
-      const res = await this.usersService.find({}, relations);
+      const res = await this.usersService.find({});
       return { message: 'Success', data: res, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };
@@ -40,12 +39,9 @@ export class UsersController {
   @Get(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async findOne(
-    @Param('id') id: string,
-    @Query('relations') relations?: string[],
-  ) {
+  async findOne(@Param('id') id: string) {
     try {
-      const res = await this.usersService.find({ id }, relations);
+      const res = await this.usersService.findOne({ id });
       return { message: 'Success', data: res, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };

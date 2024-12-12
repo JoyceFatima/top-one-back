@@ -6,7 +6,6 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Status } from 'src/common/enums';
-import { Role } from 'src/common/enums/role.enum';
 import { decodeToken } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
 import { Order } from '../../entities/orders/order.entity';
@@ -54,7 +53,11 @@ export class OrdersService {
     }
 
     return await this.ordersRepository.find({
-      where: { clientId },
+      where: {
+        client: {
+          id: clientId,
+        },
+      },
       relations: ['orderProducts', 'orderProducts.product'],
     });
   }
@@ -70,12 +73,9 @@ export class OrdersService {
 
     product.stock -= data.quantity;
     await this.productsRepository.save(product);
-
-    const userId = user.userRole[0].name === Role.SELLER ? user.id : undefined;
-
     const order = this.ordersRepository.create({
       ...data,
-      userId,
+      user,
       totalPrice,
     });
 

@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { capitalize } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
 import { Role } from '../../entities/roles/role.entity';
+import { IRole } from './interfaces/roles.dto';
 
 @Injectable()
 export class RolesService {
@@ -14,9 +16,12 @@ export class RolesService {
     return await this.rolesRepository.find({ where, relations });
   }
 
-  // async insert(data: Partial<Role>): Promise<Role> {
-  //   return await this.rolesRepository.save(data);
-  // }
+  async insert(data: IRole): Promise<Role> {
+    return await this.rolesRepository.save({
+      name: data.role,
+      description: capitalize(data.role),
+    });
+  }
 
   async delete(id: string): Promise<void> {
     const role = await this.rolesRepository.findOne({ where: { id } });

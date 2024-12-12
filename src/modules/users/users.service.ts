@@ -22,18 +22,23 @@ export class UsersService {
     private usersRolesService: UsersRolesService,
   ) {}
 
-  async find(
-    where?: Partial<User>,
-    relations: string[] = ['userRole.role'],
-  ): Promise<User[]> {
+  async find(where?: Partial<User>): Promise<User[]> {
     try {
-      return await this.usersRepository.find({ where, relations });
+      return await this.usersRepository.find({ where });
     } catch (error) {
       throw new InternalServerErrorException('Error retrieving users');
     }
   }
 
-  async insert(data: Partial<User>, roleCreate?: Role): Promise<User> {
+  async findOne(where?: Partial<User>): Promise<User> {
+    try {
+      return await this.usersRepository.findOne({ where });
+    } catch (error) {
+      throw new InternalServerErrorException('Error retrieving user');
+    }
+  }
+
+  async insert(data: Partial<User>, roleName?: Role): Promise<User> {
     try {
       const findUser = await this.usersRepository.findOne({
         where: { email: data.email },
@@ -43,7 +48,7 @@ export class UsersService {
         throw new Error('User already exists');
       }
 
-      const [role] = await this.rolesService.find({ description: roleCreate });
+      const [role] = await this.rolesService.find({ name: roleName });
       if (!role) throw new NotFoundException('Role not found');
 
       if (!data.password) {
@@ -53,8 +58,8 @@ export class UsersService {
       const password = encryptPassword(data.password);
       const user = await this.usersRepository.save({ ...data, password });
       this.usersRolesService.insert({
-        userId: user.id,
-        roleId: role.id,
+        user,
+        role,
       });
 
       return user;
@@ -101,7 +106,6 @@ export class UsersService {
     const [user] = await this.find({ id });
     if (!user) throw new NotFoundException('User not found');
 
-    await this.usersRolesService.delete(user.userRole.id);
     await this.usersRepository.delete(id);
   }
 }

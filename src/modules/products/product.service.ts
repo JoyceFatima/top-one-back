@@ -23,6 +23,12 @@ export class ProductService {
     return this.productRepository.find();
   }
 
+  async findOne(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
+  }
+
   async createProduct(token: string, data: IProduct): Promise<Product> {
     const user = decodeToken(token);
 

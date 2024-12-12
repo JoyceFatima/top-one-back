@@ -11,7 +11,7 @@ export class UserRole {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Role, (role) => role.id)
+  @ManyToOne(() => Role, (role) => role.id, { eager: true })
   @JoinColumn({ name: 'role_id' })
   role: Role;
 }

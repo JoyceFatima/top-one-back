@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { isEmail } from 'class-validator';
-import { User } from 'src/entities';
+import { User } from 'src/entities/users/user.entity';
 import {
   decodeToken,
   decryptPassword,
@@ -71,7 +71,7 @@ export class AuthService {
   }
 
   private async fetchUser(where: object): Promise<User> {
-    const [user] = await this.usersService.find(where);
+    const user = await this.usersService.findOne(where);
     if (!user) {
       throw new NotFoundException('User not found');
     }

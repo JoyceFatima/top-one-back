@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Client } from '../clients/clients.entity';
 import { Product } from '../products/product.entity';
-import { User } from '../users/user.entity';
 
 @Entity('shopping_cart')
 export class ShoppingCart {
@@ -32,9 +32,9 @@ export class ShoppingCart {
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (client) => client.id)
+  @ManyToOne(() => Client, (client) => client.id)
   @JoinColumn({ name: 'client_id' })
-  client: User;
+  client: Client;
 
   @ManyToOne(() => Product, (product) => product.id)
   @JoinColumn({ name: 'product_id' })

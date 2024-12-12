@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Client } from '../clients/clients.entity';
 import { OrderProducts } from '../order-products/order-products.entity';
 import { User } from '../users/user.entity';
 
@@ -45,9 +46,9 @@ export class Order {
   @Index()
   deletedAt: Date;
 
-  @ManyToOne(() => User, (client) => client.id)
+  @ManyToOne(() => Client, (client) => client.id)
   @JoinColumn({ name: 'client_id' })
-  client: User;
+  client: Client;
 
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
   @JoinColumn({ name: 'user_id' })

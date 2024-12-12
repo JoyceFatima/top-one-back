@@ -37,8 +37,7 @@ export class ClientsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
-      const [client] = await this.clientsService.find({ id });
-      if (!client) throw new Error('Client not found');
+      const client = await this.clientsService.findOne({ id });
       return { message: 'Success', data: client, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };

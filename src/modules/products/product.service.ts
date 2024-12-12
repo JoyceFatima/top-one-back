@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { decodeToken } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
-import { Order } from '../../entities/orders/order.entity';
 import { Product } from '../../entities/products/product.entity';
 import { IProduct } from './interfaces/product.dto';
 
@@ -15,8 +14,6 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @InjectRepository(Order)
-    private orderRepository: Repository<Order>,
   ) {}
 
   async findAll(): Promise<Product[]> {
@@ -40,19 +37,26 @@ export class ProductService {
     });
   }
 
+  async update(data: Partial<IProduct>, id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) throw new NotFoundException('Product not found');
+
+    await this.productRepository.update(id, data);
+
+    return this.productRepository.findOne({ where: { id } });
+  }
+
   async updateProduct(data: Partial<IProduct>, id: string): Promise<Product> {
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) throw new NotFoundException('Product not found');
 
-    if (data.discount !== undefined) {
-      this.validateDiscount(data.discount);
+    if (data.discount) {
+      throw new BadRequestException(
+        'Discount cannot be updated using this endpoint',
+      );
     }
 
     await this.productRepository.update(id, data);
-
-    if (data.price) {
-      await this.updateRelatedOrders(id, data.price);
-    }
 
     return this.productRepository.findOne({ where: { id } });
   }
@@ -74,24 +78,6 @@ export class ProductService {
     await this.productRepository.save(product);
 
     return product;
-  }
-
-  private async updateRelatedOrders(
-    productId: string,
-    newPrice: number,
-  ): Promise<void> {
-    // const orders = await this.orderRepository.find({
-    //   where: {
-    //     orderProducts: {
-    //       productId,
-    //     },
-    //   },
-    // });
-    // for (const order of orders) {
-    //   const findOrderProduct = (order.totalPrice =
-    //     newPrice * order.orderProducts.fin);
-    //   await this.orderRepository.save(order);
-    // }
   }
 
   private validateDiscount(discount: number): void {

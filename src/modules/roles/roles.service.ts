@@ -12,15 +12,17 @@ export class RolesService {
     private rolesRepository: Repository<Role>,
   ) {}
 
-  async find(where?: Partial<Role>, relations: string[] = []): Promise<Role[]> {
-    return await this.rolesRepository.find({ where, relations });
+  async find(where?: Partial<Role>): Promise<Role[]> {
+    return await this.rolesRepository.find({ where });
   }
 
   async insert(data: IRole): Promise<Role> {
-    return await this.rolesRepository.save({
+    const result = await this.rolesRepository.save({
       name: data.role,
       description: capitalize(data.role),
     });
+    console.log(result);
+    return result;
   }
 
   async delete(id: string): Promise<void> {

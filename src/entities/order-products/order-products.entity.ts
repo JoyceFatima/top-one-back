@@ -23,7 +23,7 @@ export class OrderProducts {
   })
   quantity: number;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, { eager: true })
   @JoinColumn({ name: 'product_id' })
   @Index()
   product: Product;

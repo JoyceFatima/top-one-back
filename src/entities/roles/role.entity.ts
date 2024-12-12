@@ -4,12 +4,10 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role as RoleName } from '../../common/enums/role.enum';
-import { UserRole } from '../user-role/user-role.entity';
 
 @Entity('roles')
 export class Role {
@@ -38,7 +36,4 @@ export class Role {
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
   @Index()
   deletedAt: Date;
-
-  @OneToMany(() => UserRole, (userRole) => userRole.role)
-  userRoles: UserRole[];
 }

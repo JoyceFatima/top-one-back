@@ -5,7 +5,6 @@ import {
   Get,
   Headers,
   Param,
-  Patch,
   Post,
   Put,
   Query,
@@ -13,6 +12,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Status } from 'src/common/enums';
+// import { Role } from 'src/common/enums/role.enum';
+// import { Roles } from 'src/decorator/roles.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { getToken } from 'src/utils/funcs';
@@ -23,22 +24,38 @@ import { OrdersService } from './order.service';
 @ApiTags('Orders')
 @Controller('orders')
 @UseGuards(AuthGuard, RolesGuard)
+// @Roles(Role.SELLER)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  // @Roles(Role.SELLER)
-  async findAll(@Query('status') status?: Status) {
+  async findAll(
+    @Query('status') status?: Status,
+    @Query('clientId') clientId?: string,
+    @Query('userId') userId?: string,
+  ) {
     try {
-      const data = await this.ordersService.findAll(status);
-      return { message: 'Success', data, statusCode: 200 };
+      const where: any = {};
+      if (status) where.status = status;
+      if (clientId) where.client = { id: clientId };
+      if (userId) where.user = { id: userId };
+
+      const data = await this.ordersService.findAll(where);
+
+      return {
+        message: 'Success',
+        data,
+        statusCode: 200,
+      };
     } catch (error) {
-      throw { message: error.message, statusCode: 400 };
+      throw {
+        message: error.message || 'An error occurred while fetching orders',
+        statusCode: 400,
+      };
     }
   }
 
   @Get(':id')
-  // @Roles(Role.SELLER)
   async findOne(@Param('id') id: string) {
     try {
       const data = await this.ordersService.findOne(id);
@@ -48,19 +65,7 @@ export class OrdersController {
     }
   }
 
-  @Get('client/:id')
-  // @Roles(Role.SELLER)
-  async findByClient(@Param('id') clientId: string) {
-    try {
-      const data = await this.ordersService.findByClient(clientId);
-      return { message: 'Success', data, statusCode: 200 };
-    } catch (error) {
-      throw { message: error.message, statusCode: 400 };
-    }
-  }
-
   @Post()
-  // @Roles(Role.SELLER)
   async create(
     @Headers('Authorization') authHeader: string,
     @Body() orderData: IOrder,
@@ -74,19 +79,7 @@ export class OrdersController {
     }
   }
 
-  @Put(':id')
-  // @Roles(Role.SELLER)
-  async update(@Param('id') id: string, @Body() orderData: Partial<IOrder>) {
-    try {
-      const data = await this.ordersService.update(id, orderData);
-      return { message: 'Order updated', data, statusCode: 200 };
-    } catch (error) {
-      throw { message: error.message, statusCode: 400 };
-    }
-  }
-
-  @Patch(':id/update-status')
-  // @Roles(Role.SELLER)
+  @Put(':id/update-status')
   async updateStatus(@Param('id') id: string, @Body() body: IStatus) {
     try {
       const data = await this.ordersService.updateStatus(id, body);
@@ -97,7 +90,6 @@ export class OrdersController {
   }
 
   @Delete(':id')
-  // @Roles(Role.SELLER)
   async delete(@Param('id') id: string) {
     try {
       await this.ordersService.delete(id);

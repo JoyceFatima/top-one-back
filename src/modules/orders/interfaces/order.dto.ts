@@ -1,18 +1,25 @@
-import { IsInt, IsNotEmpty, IsUUID, Min } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class IOrder {
+  @IsNotEmpty()
+  @IsArray()
+  shoppingCarts: string[];
+
   @IsNotEmpty()
   @IsUUID()
   clientId: string;
 
   @IsNotEmpty()
+  @IsArray()
+  products: IProducts[];
+}
+
+class IProducts {
+  @IsNotEmpty()
   @IsUUID()
-  productId: string;
+  id: string;
 
   @IsNotEmpty()
   @IsInt()
-  @Min(1)
   quantity: number;
-
-  totalPrice: number;
 }

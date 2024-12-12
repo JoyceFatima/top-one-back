@@ -59,9 +59,9 @@ export class ShoppingCartController {
 
   @Delete(':id')
   @UseGuards(new AuthGuard())
-  async removeFromCart(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     try {
-      await this.shoppingCartService.removeFromCart(id);
+      await this.shoppingCartService.delete(id);
       return { message: 'Removed from cart' };
     } catch (error) {
       throw error;

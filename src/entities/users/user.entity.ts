@@ -52,6 +52,9 @@ export class User {
   @Index()
   deletedAt: Date;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user, { eager: true })
+  @OneToMany(() => UserRole, (userRole) => userRole.user, {
+    eager: true,
+    cascade: true,
+  })
   userRoles: UserRole[];
 }

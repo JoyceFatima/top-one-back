@@ -27,15 +27,4 @@ export class AuthController {
     const res = await this.authService.renewToken(jwt);
     return { message: 'Success', data: res, statusCode: 201 };
   }
-
-  // @Post('change-password')
-  // @UseGuards(new AuthGuard(), RolesGuard)
-  // async changePassword(
-  //   @Headers('Authorization') authHeader: string,
-  //   @Body() passwords: IChangePassword,
-  // ) {
-  //   const jwt = getToken(authHeader);
-  //   await this.authService.changePassword(jwt, passwords);
-  //   return { message: 'Success', statusCode: 201 };
-  // }
 }

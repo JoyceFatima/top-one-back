@@ -16,7 +16,7 @@ export class ShoppingCartService {
   ) {}
 
   async findAll(): Promise<ShoppingCart[]> {
-    return this.shoppingCartRepository.find({ relations: ['user', 'product'] });
+    return this.shoppingCartRepository.find();
   }
 
   async addToCart(data: IShoppingCart): Promise<ShoppingCart> {
@@ -27,16 +27,19 @@ export class ShoppingCartService {
     if (!product) throw new NotFoundException('Product not found');
 
     const existingCartItem = await this.shoppingCartRepository.findOne({
-      where: { client, product },
+      where: { client: { id: client.id }, product: { id: product.id } },
     });
 
     if (existingCartItem) {
       existingCartItem.quantity += data.quantity;
-      return this.shoppingCartRepository.save(existingCartItem);
+      return await this.shoppingCartRepository.save(existingCartItem);
     }
 
-    const newCartItem = this.shoppingCartRepository.create(data);
-    return this.shoppingCartRepository.save(newCartItem);
+    return await this.shoppingCartRepository.save({
+      quantity: data.quantity,
+      client,
+      product,
+    });
   }
 
   async updateCartItem(
@@ -55,7 +58,7 @@ export class ShoppingCartService {
     return this.shoppingCartRepository.save(cartItem);
   }
 
-  async removeFromCart(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     const cartItem = await this.shoppingCartRepository.findOne({
       where: { id },
     });

@@ -46,7 +46,7 @@ export class Order {
   @Index()
   deletedAt: Date;
 
-  @ManyToOne(() => Client, (client) => client.id)
+  @ManyToOne(() => Client, (client) => client.id, { eager: true })
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
@@ -54,6 +54,8 @@ export class Order {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => OrderProducts, (orderProduct) => orderProduct.order)
+  @OneToMany(() => OrderProducts, (orderProduct) => orderProduct.order, {
+    eager: true,
+  })
   orderProducts: OrderProducts[];
 }

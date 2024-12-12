@@ -106,6 +106,9 @@ export class UsersService {
     const [user] = await this.find({ id });
     if (!user) throw new NotFoundException('User not found');
 
+    for (const role of user.userRoles) {
+      await this.usersRolesService.delete(role.id);
+    }
     await this.usersRepository.delete(id);
   }
 }

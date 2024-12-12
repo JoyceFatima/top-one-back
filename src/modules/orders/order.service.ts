@@ -1,3 +1,5 @@
+import { Status } from '@/common/enums';
+import { decodeToken } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
@@ -5,8 +7,6 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Status } from 'src/common/enums';
-import { decodeToken } from 'src/utils/funcs';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Order } from '../../entities/orders/order.entity';
 import { ClientsService } from '../clients/clients.service';
@@ -38,10 +38,6 @@ export class OrdersService {
   }
 
   async findOne(id: string): Promise<Order> {
-    if (!id) {
-      throw new NotFoundException('Order ID is required');
-    }
-
     const order = await this.ordersRepository.findOne({
       where: { id },
       relations: ['client', 'orderProducts', 'orderProducts.product'],

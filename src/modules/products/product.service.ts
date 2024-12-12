@@ -1,10 +1,10 @@
+import { decodeToken } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { decodeToken } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
 import { Product } from '../../entities/products/product.entity';
 import { IProduct } from './interfaces/product.dto';

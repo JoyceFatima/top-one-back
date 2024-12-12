@@ -1,3 +1,9 @@
+import { Status } from '@/common/enums';
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+import { getToken } from '@/utils/funcs';
 import {
   Body,
   Controller,
@@ -11,12 +17,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Status } from 'src/common/enums';
-// import { Role } from 'src/common/enums/role.enum';
-// import { Roles } from 'src/decorator/roles.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { getToken } from 'src/utils/funcs';
 import { IOrder } from './interfaces/order.dto';
 import { IStatus } from './interfaces/status.dto';
 import { OrdersService } from './order.service';
@@ -24,7 +24,7 @@ import { OrdersService } from './order.service';
 @ApiTags('Orders')
 @Controller('orders')
 @UseGuards(AuthGuard, RolesGuard)
-// @Roles(Role.SELLER)
+@Roles(Role.SELLER)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -49,7 +49,7 @@ export class OrdersController {
       };
     } catch (error) {
       throw {
-        message: error.message || 'An error occurred while fetching orders',
+        message: error.message,
         statusCode: 400,
       };
     }

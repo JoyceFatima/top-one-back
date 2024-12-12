@@ -1,4 +1,4 @@
-import { Status } from 'src/common/enums';
+import { Status } from '@/common/enums';
 import {
   Column,
   CreateDateColumn,

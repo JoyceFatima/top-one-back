@@ -1,7 +1,7 @@
+import { AuthGuard } from '@/guards/auth.guard';
+import { getToken } from '@/utils/funcs';
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { getToken } from 'src/utils/funcs';
 import { AuthService } from './auth.service';
 import { ILogin } from './interfaces/login.dto';
 

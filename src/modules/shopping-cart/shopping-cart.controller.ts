@@ -1,3 +1,4 @@
+import { AuthGuard } from '@/guards/auth.guard';
 import {
   Body,
   Controller,
@@ -9,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { IShoppingCart } from './interfaces/shopping-cart.dto';
 import { ShoppingCartService } from './shopping-cart.service';
 

@@ -1,6 +1,6 @@
+import { Client } from '@/entities/clients/clients.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Client } from 'src/entities/clients/clients.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

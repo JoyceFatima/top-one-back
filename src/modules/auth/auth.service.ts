@@ -1,17 +1,17 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { isEmail } from 'class-validator';
-import { User } from 'src/entities/users/user.entity';
+import { User } from '@/entities/users/user.entity';
 import {
   decodeToken,
   decryptPassword,
   encryptPassword,
   generateToken,
   isTokenExpired,
-} from 'src/utils/funcs';
+} from '@/utils/funcs';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { isEmail } from 'class-validator';
 import { UsersService } from '../users/users.service';
 import { IChangePassword } from './interfaces/change-password.dto';
 import { ILogin } from './interfaces/login.dto';

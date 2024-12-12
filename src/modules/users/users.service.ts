@@ -1,3 +1,5 @@
+import { Role } from '@/common/enums/role.enum';
+import { decryptPassword, encryptPassword } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
@@ -5,8 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from 'src/common/enums/role.enum';
-import { decryptPassword, encryptPassword } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/users/user.entity';
 import { RolesService } from '../roles/roles.service';

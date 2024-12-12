@@ -1,6 +1,6 @@
+import { capitalize } from '@/utils/funcs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { capitalize } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
 import { Role } from '../../entities/roles/role.entity';
 import { IRole } from './interfaces/roles.dto';
@@ -21,7 +21,6 @@ export class RolesService {
       name: data.role,
       description: capitalize(data.role),
     });
-    console.log(result);
     return result;
   }
 

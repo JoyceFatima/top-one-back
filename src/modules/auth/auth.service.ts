@@ -1,3 +1,10 @@
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { isEmail } from 'class-validator';
+
 import { User } from '@/entities/users/user.entity';
 import {
   decodeToken,
@@ -6,13 +13,9 @@ import {
   generateToken,
   isTokenExpired,
 } from '@/utils/funcs';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { isEmail } from 'class-validator';
+
 import { UsersService } from '../users/users.service';
+
 import { IChangePassword } from './interfaces/change-password.dto';
 import { ILogin } from './interfaces/login.dto';
 
@@ -31,7 +34,7 @@ export class AuthService {
 
     const token = generateToken({ password: userFound.password, ...userFound });
 
-    return { token, userFound };
+    return { token, user: userFound };
   }
 
   async renewToken(jwt: string) {

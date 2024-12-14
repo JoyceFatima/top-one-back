@@ -1,7 +1,9 @@
-import { AuthGuard } from '@/guards/auth.guard';
-import { getToken } from '@/utils/funcs';
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { AuthGuard } from '@/guards/auth.guard';
+import { getToken } from '@/utils/funcs';
+
 import { AuthService } from './auth.service';
 import { ILogin } from './interfaces/login.dto';
 
@@ -25,6 +27,6 @@ export class AuthController {
   async renewToken(@Headers('Authorization') authHeader: string) {
     const jwt = getToken(authHeader);
     const res = await this.authService.renewToken(jwt);
-    return { message: 'Success', data: res, statusCode: 201 };
+    return { message: 'Success', data: res, statusCode: 200 };
   }
 }

@@ -16,7 +16,7 @@ export class AuthController {
   async create(@Body() user: ILogin) {
     try {
       const res = await this.authService.login(user);
-      return { message: 'Success', data: res, statusCode: 201 };
+      return { message: 'Success', data: res, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };
     }

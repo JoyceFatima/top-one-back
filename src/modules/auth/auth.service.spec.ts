@@ -91,7 +91,7 @@ describe('AuthService', () => {
         password: 'password',
       });
 
-      expect(result).toEqual({ token: 'token', userFound: user });
+      expect(result).toEqual({ token: 'token',  user });
     });
 
     it('should return a token and user on successful login with username', async () => {
@@ -105,7 +105,7 @@ describe('AuthService', () => {
         password: 'password',
       });
 
-      expect(result).toEqual({ token: 'token', userFound: user });
+      expect(result).toEqual({ token: 'token',  user });
     });
   });
 

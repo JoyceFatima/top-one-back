@@ -37,26 +37,26 @@ export class SeedService {
   async users() {
     const admins: Partial<User>[] = [
       {
-        username: 'John Doe',
-        email: 'john.doe@example.com',
+        username: 'John',
+        email: 'john@admin.com',
         password: 'Password@123',
       },
       {
-        username: 'Jane Doe',
-        email: 'jane.doe@example.com',
+        username: 'Jane',
+        email: 'jane@admin.com',
         password: 'Password@123',
       },
     ];
 
     const sellers: Partial<User>[] = [
       {
-        username: 'Seller 1',
-        email: 'seller1@example.com',
+        username: 'Dave',
+        email: 'dave@seller.com',
         password: 'Password@123',
       },
       {
-        username: 'Seller 2',
-        email: 'seller2@example.com',
+        username: 'Mary',
+        email: 'mary@seller.com',
         password: 'Password@123',
       },
     ];
@@ -81,12 +81,12 @@ export class SeedService {
   async clients() {
     const clients: Partial<Client>[] = [
       {
-        name: 'Client 1',
-        email: 'client1@example.com',
+        name: 'Rick Sanchez',
+        email: 'rick@client.com',
       },
       {
-        name: 'Client 2',
-        email: 'client2@example.com',
+        name: 'Morty Smith',
+        email: 'morty@client.com',
       },
     ];
 
@@ -106,7 +106,7 @@ export class SeedService {
 
   async products() {
     const user = await this.userService.findOne({
-      email: 'john.doe@example.com',
+      email: 'john@admin.com',
     });
     const products: IProduct[] = [
       {
@@ -115,6 +115,8 @@ export class SeedService {
         price: 100,
         discount: 10,
         stock: 100,
+        imageUrl:
+          'https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2024/07/10/1572679108-cha-de-alecrim-para-que-serve.jpg',
       },
       {
         name: 'Product 2',
@@ -122,6 +124,8 @@ export class SeedService {
         price: 200,
         discount: 20,
         stock: 200,
+        imageUrl:
+          'https://nutritotal.com.br/publico-geral/wp-content/uploads/2022/06/Cha_Hortela_Nutritotal_Para_Todos_novosite.png',
       },
     ];
 
@@ -140,10 +144,10 @@ export class SeedService {
 
   async orders() {
     const user = await this.userService.findOne({
-      email: 'john.doe@example.com',
+      email: 'john@admin.com',
     });
     const client = await this.clientsService.findOne({
-      email: 'client1@example.com',
+      email: 'rick@client.com',
     });
     const products = await this.productsService.findAll();
 

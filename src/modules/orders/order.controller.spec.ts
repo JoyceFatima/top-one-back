@@ -58,6 +58,7 @@ const mockOrdersService = {
   findAll: jest.fn(),
   findOne: jest.fn(),
   create: jest.fn(),
+  update: jest.fn(),
   updateStatus: jest.fn(),
   delete: jest.fn(),
 };
@@ -241,6 +242,30 @@ describe('OrdersController', () => {
 
       await expect(ordersController.delete('1')).rejects.toEqual({
         message: 'Error deleting order',
+        statusCode: 400,
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('should update an order by id', async () => {
+      ordersService.update.mockResolvedValue(mockOrder);
+
+      const result = await ordersController.update('1', mockAddOrder);
+
+      expect(result).toEqual({
+        message: 'Order updated',
+        data: mockOrder,
+        statusCode: 200,
+      });
+      expect(ordersService.update).toHaveBeenCalledWith('1', mockAddOrder);
+    });
+
+    it('should handle errors gracefully', async () => {
+      ordersService.update.mockRejectedValue(new Error('Error updating order'));
+
+      await expect(ordersController.update('1', mockAddOrder)).rejects.toEqual({
+        message: 'Error updating order',
         statusCode: 400,
       });
     });

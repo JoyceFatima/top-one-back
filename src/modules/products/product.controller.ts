@@ -24,10 +24,10 @@ import { ProductService } from './product.service';
 @ApiTags('Products')
 @Controller('products')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Roles(Role.ADMIN, Role.SELLER)
   @Get()
   async findAll() {
     try {
@@ -38,6 +38,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   async createProduct(
     @Headers('Authorization') authHeader: string,
@@ -53,6 +54,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Put(':id')
   async updateProduct(
     @Param('id') id: string,
@@ -66,6 +68,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/discount')
   async applyDiscount(
     @Param('id') id: string,
@@ -79,6 +82,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async deleteProduct(@Param('id') id: string) {
     try {

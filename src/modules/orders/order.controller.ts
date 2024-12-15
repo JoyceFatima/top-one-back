@@ -82,6 +82,16 @@ export class OrdersController {
     }
   }
 
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() orderData: IOrder) {
+    try {
+      const data = await this.ordersService.update(id, orderData);
+      return { message: 'Order updated', data, statusCode: 200 };
+    } catch (error) {
+      throw { message: error.message, statusCode: 400 };
+    }
+  }
+
   @Put(':id/update-status')
   async updateStatus(@Param('id') id: string, @Body() body: IStatus) {
     try {

@@ -11,8 +11,10 @@ export class OrderProductsService {
     private productRepository: Repository<OrderProducts>,
   ) {}
 
-  async findAll(): Promise<OrderProducts[]> {
-    return this.productRepository.find();
+  async findAll(
+    where: FindOptionsWhere<OrderProducts>,
+  ): Promise<OrderProducts[]> {
+    return this.productRepository.find({ where });
   }
 
   async findOne(
@@ -23,6 +25,10 @@ export class OrderProductsService {
 
   async create(data: Partial<OrderProducts>): Promise<OrderProducts> {
     return this.productRepository.save(data);
+  }
+
+  async update(data: Partial<OrderProducts>, id: string): Promise<void> {
+    await this.productRepository.update(id, data);
   }
 
   async delete(id: string): Promise<void> {

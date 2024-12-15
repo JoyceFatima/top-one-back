@@ -106,6 +106,66 @@ export class OrdersService {
     });
   }
 
+  async update(orderId: string, data: IOrder): Promise<void> {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+      relations: ['orderProducts', 'orderProducts.product'],
+    });
+
+    if (!order) {
+      throw new Error(`Order with ID ${orderId} not found.`);
+    }
+
+    for (const orderProduct of order.orderProducts) {
+      const product = await this.productService.findOne(
+        orderProduct.product.id,
+      );
+      const updatedStock = product.stock + orderProduct.quantity;
+
+      await this.productService.update(
+        { ...product, stock: updatedStock },
+        product.id,
+      );
+
+      await this.orderProductsService.delete(orderProduct.id);
+    }
+
+    const productsWithDetails = await Promise.all(
+      data.products.map(async ({ id, quantity }) => {
+        const product = await this.productService.findOne(id);
+
+        const updatedStock = product.stock - quantity;
+        if (updatedStock < 0) {
+          throw new Error(`Insufficient stock for product ID ${id}`);
+        }
+
+        await this.productService.update(
+          { ...product, stock: updatedStock },
+          product.id,
+        );
+
+        return { product, quantity };
+      }),
+    );
+
+    const newOrderProducts = await Promise.all(
+      productsWithDetails.map(({ product, quantity }) =>
+        this.orderProductsService.create({ product, quantity }),
+      ),
+    );
+
+    const totalPrice = productsWithDetails.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0,
+    );
+
+    order.orderProducts = newOrderProducts;
+    order.totalPrice = totalPrice;
+    order.updatedAt = new Date();
+
+    await this.ordersRepository.save(order);
+  }
+
   async updateStatus(orderId: string, newStatus: IStatus): Promise<Order> {
     const order = await this.ordersRepository.findOne({
       where: { id: orderId },
@@ -137,13 +197,14 @@ export class OrdersService {
 
   async delete(id: string): Promise<void> {
     const order = await this.findOne(id);
-    const orderProduct = await this.orderProductsService.findOne({
+    const orderProducts = await this.orderProductsService.findAll({
       order: {
         id,
       },
     });
-
-    await this.orderProductsService.delete(orderProduct.id);
+    for (const orderProduct of orderProducts) {
+      await this.orderProductsService.delete(orderProduct.id);
+    }
     await this.ordersRepository.remove(order);
   }
 }

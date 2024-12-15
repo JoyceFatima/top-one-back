@@ -96,6 +96,7 @@ const mockOrderProductsRepository = {
   findOne: jest.fn(),
   save: jest.fn(),
   delete: jest.fn(),
+  update: jest.fn(),
 };
 
 describe('OrderProductsService', () => {
@@ -123,13 +124,28 @@ describe('OrderProductsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all order products', async () => {
+    it('should return all order products matching the criteria', async () => {
       orderProductsRepository.find.mockResolvedValue([mockOrderProduct]);
 
-      const result = await orderProductsService.findAll();
+      const result = await orderProductsService.findAll({ id: '1' });
 
       expect(result).toEqual([mockOrderProduct]);
-      expect(orderProductsRepository.find).toHaveBeenCalled();
+      expect(orderProductsRepository.find).toHaveBeenCalledWith({
+        where: { id: '1' },
+      });
+    });
+
+    it('should return an empty array if no order products match the criteria', async () => {
+      orderProductsRepository.find.mockResolvedValue([]);
+
+      const result = await orderProductsService.findAll({
+        id: 'nonexistent-id',
+      });
+
+      expect(result).toEqual([]);
+      expect(orderProductsRepository.find).toHaveBeenCalledWith({
+        where: { id: 'nonexistent-id' },
+      });
     });
   });
 
@@ -166,6 +182,40 @@ describe('OrderProductsService', () => {
       await orderProductsService.delete('1');
 
       expect(orderProductsRepository.delete).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('update', () => {
+    it('should update an order product with the provided data', async () => {
+      orderProductsRepository.update.mockResolvedValue(undefined);
+
+      const updateData = { quantity: 5 };
+      const orderProductId = '1';
+
+      await orderProductsService.update(updateData, orderProductId);
+
+      expect(orderProductsRepository.update).toHaveBeenCalledWith(
+        orderProductId,
+        updateData,
+      );
+    });
+
+    it('should throw an error if update fails', async () => {
+      orderProductsRepository.update.mockRejectedValue(
+        new Error('Update failed'),
+      );
+
+      const updateData = { quantity: 5 };
+      const orderProductId = '1';
+
+      await expect(
+        orderProductsService.update(updateData, orderProductId),
+      ).rejects.toThrow('Update failed');
+
+      expect(orderProductsRepository.update).toHaveBeenCalledWith(
+        orderProductId,
+        updateData,
+      );
     });
   });
 });

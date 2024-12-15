@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class DbInit1734281809638 implements MigrationInterface {
-  name = 'DbInit1734281809638';
+export class DbInit1734294539181 implements MigrationInterface {
+  name = 'DbInit1734294539181';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -32,13 +32,13 @@ export class DbInit1734281809638 implements MigrationInterface {
       `CREATE INDEX "IDX_09b0a39ef7c0b162f6a2f3c860" ON "orders" ("deleted_at") `,
     );
     await queryRunner.query(
-      `CREATE TABLE "order-products" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "quantity" integer NOT NULL DEFAULT '1', "product_id" uuid, "order_id" uuid, CONSTRAINT "UQ_bdc0068a0d52153034882d60d31" UNIQUE ("order_id", "product_id"), CONSTRAINT "PK_24016ece7c077d34c9fd8bff952" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "order_products" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "quantity" integer NOT NULL DEFAULT '1', "product_id" uuid, "order_id" uuid, CONSTRAINT "UQ_df651f408724961907ab06672fa" UNIQUE ("order_id", "product_id"), CONSTRAINT "PK_3e59f094c2dc3310d585216a813" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_9efc52af9a0626d0a090a41457" ON "order-products" ("product_id") `,
+      `CREATE INDEX "IDX_2d58e8bd11dc840b39f99824d8" ON "order_products" ("product_id") `,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_65bfddc52553805125d985089d" ON "order-products" ("order_id") `,
+      `CREATE INDEX "IDX_f258ce2f670b34b38630914cf9" ON "order_products" ("order_id") `,
     );
     await queryRunner.query(
       `CREATE TABLE "products" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "description" text, "price" numeric(10,2) NOT NULL, "stock" integer NOT NULL DEFAULT '0', "discount" numeric(5,2) NOT NULL DEFAULT '0', "isActive" boolean NOT NULL DEFAULT true, "category" character varying(255), "imageUrl" character varying(255), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "user_id" uuid, CONSTRAINT "UQ_4c9fb58de893725258746385e16" UNIQUE ("name"), CONSTRAINT "PK_0806c755e0aca124e67c0cf6d7d" PRIMARY KEY ("id"))`,
@@ -68,10 +68,10 @@ export class DbInit1734281809638 implements MigrationInterface {
       `ALTER TABLE "orders" ADD CONSTRAINT "FK_a922b820eeef29ac1c6800e826a" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "order-products" ADD CONSTRAINT "FK_9efc52af9a0626d0a090a414572" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "order_products" ADD CONSTRAINT "FK_2d58e8bd11dc840b39f99824d84" FOREIGN KEY ("product_id") REFERENCES "products"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "order-products" ADD CONSTRAINT "FK_65bfddc52553805125d985089d0" FOREIGN KEY ("order_id") REFERENCES "orders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "order_products" ADD CONSTRAINT "FK_f258ce2f670b34b38630914cf9e" FOREIGN KEY ("order_id") REFERENCES "orders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "products" ADD CONSTRAINT "FK_176b502c5ebd6e72cafbd9d6f70" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -95,10 +95,10 @@ export class DbInit1734281809638 implements MigrationInterface {
       `ALTER TABLE "products" DROP CONSTRAINT "FK_176b502c5ebd6e72cafbd9d6f70"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "order-products" DROP CONSTRAINT "FK_65bfddc52553805125d985089d0"`,
+      `ALTER TABLE "order_products" DROP CONSTRAINT "FK_f258ce2f670b34b38630914cf9e"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "order-products" DROP CONSTRAINT "FK_9efc52af9a0626d0a090a414572"`,
+      `ALTER TABLE "order_products" DROP CONSTRAINT "FK_2d58e8bd11dc840b39f99824d84"`,
     );
     await queryRunner.query(
       `ALTER TABLE "orders" DROP CONSTRAINT "FK_a922b820eeef29ac1c6800e826a"`,
@@ -124,12 +124,12 @@ export class DbInit1734281809638 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "products"`);
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_65bfddc52553805125d985089d"`,
+      `DROP INDEX "public"."IDX_f258ce2f670b34b38630914cf9"`,
     );
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_9efc52af9a0626d0a090a41457"`,
+      `DROP INDEX "public"."IDX_2d58e8bd11dc840b39f99824d8"`,
     );
-    await queryRunner.query(`DROP TABLE "order-products"`);
+    await queryRunner.query(`DROP TABLE "order_products"`);
     await queryRunner.query(
       `DROP INDEX "public"."IDX_09b0a39ef7c0b162f6a2f3c860"`,
     );

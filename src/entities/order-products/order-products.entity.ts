@@ -11,7 +11,7 @@ import {
 import { Order } from '../orders/order.entity';
 import { Product } from '../products/product.entity';
 
-@Entity('order-products')
+@Entity('order_products')
 @Unique(['order', 'product'])
 export class OrderProducts {
   @PrimaryGeneratedColumn('uuid')

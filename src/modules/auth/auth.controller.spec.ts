@@ -11,9 +11,9 @@ const mockUser = {
   username: 'username',
   email: 'email',
   password: 'password',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deletedAt: new Date(),
+  createdAt: new Date('2020-11-11'),
+  updatedAt: new Date('2020-11-11'),
+  deletedAt: new Date('2020-11-11'),
   userRoles: [],
 };
 
@@ -51,7 +51,7 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should return success response on successful login', async () => {
       const user = { username: 'test', password: 'password' };
-      const loginResponse = { token: 'fake-token', userFound: mockUser };
+      const loginResponse = { token: 'fake-token', user: mockUser };
 
       jest.spyOn(authService, 'login').mockResolvedValue(loginResponse as any);
 
@@ -60,7 +60,7 @@ describe('AuthController', () => {
       expect(result).toEqual({
         message: 'Success',
         data: loginResponse,
-        statusCode: 201,
+        statusCode: 200,
       });
       expect(authService.login).toHaveBeenCalledWith(user);
     });

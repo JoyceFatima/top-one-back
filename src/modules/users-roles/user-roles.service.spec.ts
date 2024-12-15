@@ -80,8 +80,8 @@ describe('UsersRolesService', () => {
           name: Role.ADMIN,
           description: 'Admin role',
           isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date('2020-11-11'),
+          updatedAt: new Date('2020-11-11'),
           deletedAt: null,
         } as RoleEntity,
       };

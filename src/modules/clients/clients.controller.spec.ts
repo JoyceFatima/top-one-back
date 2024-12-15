@@ -11,9 +11,9 @@ const mockClient = {
   name: 'name',
   email: 'email',
   phone: 'phone',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deletedAt: new Date(),
+  createdAt: new Date('2020-11-11'),
+  updatedAt: new Date('2020-11-11'),
+  deletedAt: new Date('2020-11-11'),
 };
 
 jest.mock('./clients.service');

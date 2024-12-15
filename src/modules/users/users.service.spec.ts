@@ -160,28 +160,89 @@ describe('UsersService', () => {
   });
 
   describe('upsert', () => {
-    it('should insert a new user if no user exists', async () => {
-      mockUsersRepository.find.mockResolvedValue([]);
-      const mockData = { email: 'new@example.com', password: 'newPassword' };
-      const mockInsert = jest
-        .spyOn(usersService, 'insert')
-        .mockResolvedValue(mockUser as any);
-
-      await usersService.upsert(mockData as User);
-
-      expect(mockInsert).toHaveBeenCalledWith(mockData);
-    });
-
-    it('should update an existing user if user exists', async () => {
-      mockUsersRepository.find.mockResolvedValue([mockUser]);
-      const mockData = {
-        email: 'updated@example.com',
-        password: 'updatedPassword',
+    it('should insert a new user when no user is found by ID', async () => {
+      const newUser: any = {
+        id: 'new-id',
+        email: 'test@example.com',
+        password: 'plainPassword',
+        userRoles: [{ id: 'role-id', role: { name: 'admin' } }],
       };
 
-      await usersService.upsert(mockData as User, '1');
+      mockUsersRepository.find.mockResolvedValue([]);
+      mockRolesService.find.mockResolvedValue([
+        { id: 'role-id', name: 'admin' },
+      ]);
+      mockUsersRolesService.insert.mockResolvedValue(undefined);
+      mockEncryptPassword.mockReturnValue('hashedPassword');
 
-      expect(mockUsersRepository.update).toHaveBeenCalledWith('1', mockData);
+      await usersService.upsert(newUser);
+
+      expect(mockUsersRepository.find).toHaveBeenCalledWith({
+        where: { id: undefined },
+      });
+      expect(mockUsersRepository.save).toHaveBeenCalledWith({
+        id: 'new-id',
+        email: 'test@example.com',
+        password: 'hashedPassword',
+        userRoles: newUser.userRoles,
+      });
+      expect(mockUsersRolesService.insert).toHaveBeenCalledWith({
+        role: { id: 'role-id', name: 'admin' },
+      });
+    });
+
+    it('should update an existing user and reassign roles', async () => {
+      const existingUser = {
+        id: 'existing-id',
+        email: 'existing@example.com',
+        password: 'hashedPassword',
+        userRoles: [{ id: 'old-role-id', role: { name: 'user' } }],
+      };
+
+      const updatedUser: any = {
+        id: 'existing-id',
+        email: 'updated@example.com',
+        password: 'newHashedPassword',
+        userRoles: [{ id: 'new-role-id', role: { name: 'admin' } }],
+      };
+
+      mockUsersRepository.find.mockResolvedValue([existingUser]);
+      mockUsersRepository.save.mockResolvedValue(updatedUser);
+      mockUsersRolesService.delete.mockResolvedValue(undefined);
+      mockUsersRolesService.insert.mockResolvedValue(undefined);
+
+      await usersService.upsert(updatedUser, 'existing-id');
+
+      expect(mockUsersRepository.find).toHaveBeenCalledWith({
+        where: { id: 'existing-id' },
+      });
+      expect(mockUsersRolesService.delete).toHaveBeenCalledWith('old-role-id');
+      expect(mockUsersRepository.save).toHaveBeenCalledWith(updatedUser);
+      expect(mockUsersRolesService.insert).toHaveBeenCalledWith({
+        user: updatedUser,
+        role: updatedUser.userRoles[0].role,
+      });
+    });
+
+    it('should handle errors gracefully', async () => {
+      const newUser: any = {
+        id: 'error-id',
+        email: 'error@example.com',
+        password: 'plainPassword',
+        userRoles: [{ id: 'role-id', role: { name: 'admin' } }],
+      };
+
+      mockUsersRepository.find.mockRejectedValue(new Error('Database error'));
+
+      await expect(usersService.upsert(newUser)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+
+      expect(mockUsersRepository.find).toHaveBeenCalledWith({
+        where: { id: undefined },
+      });
+      expect(mockUsersRolesService.delete).not.toHaveBeenCalled();
+      expect(mockUsersRepository.save).not.toHaveBeenCalled();
     });
   });
 

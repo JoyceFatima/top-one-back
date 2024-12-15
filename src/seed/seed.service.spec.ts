@@ -104,7 +104,7 @@ describe('SeedService', () => {
     it('should insert users if they do not exist', async () => {
       mockUsersService.findOne.mockResolvedValue(null);
       await seedService.users();
-      expect(mockUsersService.insert).toHaveBeenCalledTimes(4); // 2 admins + 2 sellers
+      expect(mockUsersService.insert).toHaveBeenCalledTimes(4);
     });
 
     it('should not insert users if they already exist', async () => {

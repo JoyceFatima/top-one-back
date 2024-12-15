@@ -74,10 +74,19 @@ export class UsersService {
 
   async upsert(data: User, id?: string): Promise<void> {
     const [user] = await this.find({ id });
+
     if (!user) {
-      await this.insert(data);
+      await this.insert(data, data.userRoles[0].role.name);
     } else {
-      await this.usersRepository.update(user.id, data);
+      for (const role of user.userRoles) {
+        await this.usersRolesService.delete(role.id);
+      }
+      const userUpdated = await this.usersRepository.save(data);
+
+      this.usersRolesService.insert({
+        user: userUpdated,
+        role: data.userRoles[0].role,
+      });
     }
   }
 

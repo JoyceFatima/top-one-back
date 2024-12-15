@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Client } from '../clients/clients.entity';
 import { Product } from '../products/product.entity';
 

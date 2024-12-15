@@ -1,9 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { ShoppingCart } from '../../entities/shopping-cart/shopping-cart.entity';
 import { ClientsService } from '../clients/clients.service';
 import { ProductService } from '../products/product.service';
+
 import { ShoppingCartService } from './shopping-cart.service';
 
 const mockCartItem = {

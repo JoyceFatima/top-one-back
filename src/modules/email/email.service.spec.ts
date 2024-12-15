@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
+
 import { EmailService } from './email.service';
 
 jest.mock('axios');

@@ -1,15 +1,18 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { Status } from '@/common/enums';
 import { Order } from '@/entities/orders/order.entity';
 import { AuthGuard } from '@/guards/auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
-import { getToken } from '@/utils/funcs';
-import { Test, TestingModule } from '@nestjs/testing';
+import { decodeToken, getToken } from '@/utils/funcs';
+
 import { IOrder } from './interfaces/order.dto';
 import { OrdersController } from './order.controller';
 import { OrdersService } from './order.service';
 
 jest.mock('@/utils/funcs');
 const mockGetToken = getToken as jest.Mock;
+const mockDecodeToken = decodeToken as jest.Mock;
 
 const mockOrder: Order = {
   client: {
@@ -158,6 +161,7 @@ describe('OrdersController', () => {
   describe('create', () => {
     it('should create a new order', async () => {
       mockGetToken.mockReturnValue('mockToken');
+      mockDecodeToken.mockReturnValue(mockOrder.user);
       ordersService.create.mockResolvedValue(mockOrder);
 
       const result = await ordersController.create(
@@ -172,7 +176,7 @@ describe('OrdersController', () => {
       });
       expect(mockGetToken).toHaveBeenCalledWith('Bearer mockToken');
       expect(ordersService.create).toHaveBeenCalledWith(
-        'mockToken',
+        mockOrder.user,
         mockAddOrder,
       );
     });

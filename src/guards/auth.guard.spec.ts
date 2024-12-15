@@ -1,5 +1,7 @@
-import { verifyToken } from '@/utils/funcs';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+
+import { verifyToken } from '@/utils/funcs';
+
 import { AuthGuard } from './auth.guard';
 
 jest.mock('@/utils/funcs');
@@ -50,7 +52,7 @@ describe('AuthGuard', () => {
       expect(result).toBe(true);
       expect(mockVerifyToken).toHaveBeenCalledWith('validToken');
 
-      const request = context.switchToHttp().getRequest();
+      const request = context.switchToHttp!().getRequest!();
       expect(request.user).toBeUndefined();
     });
 

@@ -1,7 +1,8 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { AuthGuard } from '@/guards/auth.guard';
 import { getToken } from '@/utils/funcs';
-import { ExecutionContext } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
@@ -39,7 +40,7 @@ describe('AuthController', () => {
     })
       .overrideGuard(AuthGuard)
       .useValue({
-        canActivate: jest.fn((context: ExecutionContext) => true),
+        canActivate: jest.fn(() => true),
       })
       .compile();
 
@@ -52,7 +53,7 @@ describe('AuthController', () => {
       const user = { username: 'test', password: 'password' };
       const loginResponse = { token: 'fake-token', userFound: mockUser };
 
-      jest.spyOn(authService, 'login').mockResolvedValue(loginResponse);
+      jest.spyOn(authService, 'login').mockResolvedValue(loginResponse as any);
 
       const result = await authController.create(user);
 
@@ -96,7 +97,7 @@ describe('AuthController', () => {
       expect(result).toEqual({
         message: 'Success',
         data: renewedTokenResponse,
-        statusCode: 201,
+        statusCode: 200,
       });
       expect(getToken).toHaveBeenCalledWith(authHeader);
       expect(authService.renewToken).toHaveBeenCalledWith('fake-jwt-token');

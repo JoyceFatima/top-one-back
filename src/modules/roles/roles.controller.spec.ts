@@ -1,8 +1,10 @@
+import { NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { Role } from '@/common/enums/role.enum';
 import { AuthGuard } from '@/guards/auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
-import { NotFoundException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+
 import { RolesController } from './roles.controller';
 import { RolesService } from './roles.service';
 

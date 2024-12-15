@@ -1,7 +1,8 @@
-import { Client } from '@/entities/clients/clients.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Client } from '@/entities/clients/clients.entity';
 
 @Injectable()
 export class ClientsService {
@@ -22,7 +23,6 @@ export class ClientsService {
     relations: string[] = [],
   ): Promise<Client> {
     const client = await this.clientsRepository.findOne({ where, relations });
-    if (!client) throw new NotFoundException('Client not found');
     return client;
   }
 

@@ -1,7 +1,9 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { databaseConfig } from '../common/database/database-config';
+
 import { AuthModule } from './auth/auth.module';
 import { ClientsModule } from './clients/clients.module';
 import { OrderProductsModule } from './order-products/order-products.module';
@@ -27,6 +29,5 @@ import { UsersModule } from './users/users.module';
 })
 export class AppModule implements OnModuleInit {
   constructor() {}
-
-  async onModuleInit() {}
+  onModuleInit() {}
 }

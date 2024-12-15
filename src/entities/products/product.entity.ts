@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { OrderProducts } from '../order-products/order-products.entity';
 import { ShoppingCart } from '../shopping-cart/shopping-cart.entity';
 import { User } from '../users/user.entity';

@@ -1,9 +1,3 @@
-import { Status } from '@/common/enums';
-import { Role } from '@/common/enums/role.enum';
-import { Roles } from '@/decorator/roles.decorator';
-import { AuthGuard } from '@/guards/auth.guard';
-import { RolesGuard } from '@/guards/roles.guard';
-import { getToken } from '@/utils/funcs';
 import {
   Body,
   Controller,
@@ -17,6 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { Status } from '@/common/enums';
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+import { decodeToken, getToken } from '@/utils/funcs';
+
 import { IOrder } from './interfaces/order.dto';
 import { IStatus } from './interfaces/status.dto';
 import { OrdersService } from './order.service';
@@ -72,7 +74,8 @@ export class OrdersController {
   ) {
     try {
       const token = getToken(authHeader);
-      const data = await this.ordersService.create(token, orderData);
+      const user = decodeToken(token);
+      const data = await this.ordersService.create(user, orderData);
       return { message: 'Order created', data, statusCode: 201 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };

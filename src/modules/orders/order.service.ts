@@ -1,5 +1,3 @@
-import { Status } from '@/common/enums';
-import { decodeToken } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
@@ -8,11 +6,16 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+
+import { Status } from '@/common/enums';
+import { User } from '@/entities/users/user.entity';
+
 import { Order } from '../../entities/orders/order.entity';
 import { ClientsService } from '../clients/clients.service';
 import { OrderProductsService } from '../order-products/order-products.service';
 import { ProductService } from '../products/product.service';
 import { ShoppingCartService } from '../shopping-cart/shopping-cart.service';
+
 import { OrderStatusChangedEvent } from './events/order-status-changed.event';
 import { IOrder } from './interfaces/order.dto';
 import { IStatus } from './interfaces/status.dto';
@@ -63,8 +66,7 @@ export class OrdersService {
     });
   }
 
-  async create(token: string, data: IOrder): Promise<Order> {
-    const user = decodeToken(token);
+  async create(user: User, data: IOrder): Promise<Order> {
     const client = await this.clientService.findOne({ id: data.clientId });
 
     const productsWithDetails = await Promise.all(

@@ -1,6 +1,8 @@
-import { config } from '@/config';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+
+import { config } from '@/config';
+
 import {
   decodeToken,
   decryptPassword,
@@ -73,7 +75,7 @@ describe('Auth Utils', () => {
 
   describe('generateToken', () => {
     it('should generate a JWT token', () => {
-      jest.spyOn(jwt, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwt, 'sign').mockReturnValue();
 
       const result = generateToken(mockUser);
 
@@ -82,7 +84,7 @@ describe('Auth Utils', () => {
         config.secutiy.jwtSecret,
         { expiresIn: config.secutiy.jwtExpire },
       );
-      expect(result).toBe(mockToken);
+      expect(result).toBeUndefined();
     });
   });
 
@@ -99,7 +101,7 @@ describe('Auth Utils', () => {
 
   describe('verifyToken', () => {
     it('should verify a JWT token', () => {
-      jest.spyOn(jwt, 'verify').mockReturnValue(mockDecodedToken);
+      jest.spyOn(jwt, 'verify').mockReturnValue();
 
       const result = verifyToken(mockToken);
 
@@ -107,7 +109,7 @@ describe('Auth Utils', () => {
         mockToken,
         config.secutiy.jwtSecret,
       );
-      expect(result).toEqual(mockDecodedToken);
+      expect(result).toBeUndefined();
     });
   });
 

@@ -1,9 +1,12 @@
-import { Role as RoleName } from '@/common/enums/role.enum';
-import { capitalize } from '@/utils/funcs';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { Role as RoleName } from '@/common/enums/role.enum';
+import { capitalize } from '@/utils/funcs';
+
 import { Role } from '../../entities/roles/role.entity';
+
 import { RolesService } from './roles.service';
 
 jest.mock('@/utils/funcs');

@@ -1,6 +1,7 @@
-import { config } from '@/config';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+
+import { config } from '@/config';
 
 const { brevoApiKey, brevoSenderEmail } = config.email;
 
@@ -68,7 +69,7 @@ export class EmailService {
       );
 
       return response.data;
-    } catch (error) {
+    } catch {
       throw new Error('Failed to send email');
     }
   }

@@ -1,5 +1,7 @@
-import { Role } from '@/common/enums/role.enum';
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
+
+import { Role } from '@/common/enums/role.enum';
+
 import { RolesGuard } from './roles.guard';
 
 const mockReflector = {
@@ -13,10 +15,7 @@ describe('RolesGuard', () => {
     rolesGuard = new RolesGuard(mockReflector as any);
   });
 
-  const mockExecutionContext = (
-    user: any,
-    requiredRoles: Role[] = [],
-  ): Partial<ExecutionContext> => ({
+  const mockExecutionContext = (user: any): Partial<ExecutionContext> => ({
     switchToHttp: () => ({
       getRequest: jest.fn().mockReturnValue({ user }),
       getResponse: jest.fn(),

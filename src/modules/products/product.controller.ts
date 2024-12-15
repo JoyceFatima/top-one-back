@@ -1,8 +1,3 @@
-import { Role } from '@/common/enums/role.enum';
-import { Roles } from '@/decorator/roles.decorator';
-import { AuthGuard } from '@/guards/auth.guard';
-import { RolesGuard } from '@/guards/roles.guard';
-import { getToken } from '@/utils/funcs';
 import {
   Body,
   Controller,
@@ -16,6 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+import { decodeToken, getToken } from '@/utils/funcs';
+
 import { IProduct } from './interfaces/product.dto';
 import { ProductService } from './product.service';
 
@@ -43,7 +45,8 @@ export class ProductController {
   ) {
     try {
       const token = getToken(authHeader);
-      const data = await this.productService.createProduct(token, productData);
+      const user = decodeToken(token);
+      const data = await this.productService.createProduct(user, productData);
       return { message: 'Product created', data };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };

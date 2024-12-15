@@ -1,4 +1,3 @@
-import { Status } from '@/common/enums';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +10,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Status } from '@/common/enums';
+
 import { Client } from '../clients/clients.entity';
 import { OrderProducts } from '../order-products/order-products.entity';
 import { User } from '../users/user.entity';

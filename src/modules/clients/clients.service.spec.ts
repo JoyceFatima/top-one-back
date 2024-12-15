@@ -1,8 +1,10 @@
-import { Client } from '@/entities/clients/clients.entity';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Client } from '@/entities/clients/clients.entity';
+
 import { ClientsService } from './clients.service';
 
 const mockClient = {
@@ -72,14 +74,6 @@ describe('ClientsService', () => {
         where: { id: '1' },
         relations: [],
       });
-    });
-
-    it('should throw a NotFoundException if the client is not found', async () => {
-      clientsRepository.findOne.mockResolvedValue(null);
-
-      await expect(clientsService.findOne({ id: '1' })).rejects.toThrow(
-        NotFoundException,
-      );
     });
   });
 

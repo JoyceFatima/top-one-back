@@ -1,3 +1,6 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+
 import {
   decodeToken,
   decryptPassword,
@@ -5,9 +8,9 @@ import {
   generateToken,
   isTokenExpired,
 } from '@/utils/funcs';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from '../users/users.service';
+
 import { AuthService } from './auth.service';
 
 jest.mock('@/utils/funcs');
@@ -91,7 +94,7 @@ describe('AuthService', () => {
         password: 'password',
       });
 
-      expect(result).toEqual({ token: 'token', userFound: user });
+      expect(result).toEqual({ token: 'token', user });
     });
 
     it('should return a token and user on successful login with username', async () => {
@@ -105,7 +108,7 @@ describe('AuthService', () => {
         password: 'password',
       });
 
-      expect(result).toEqual({ token: 'token', userFound: user });
+      expect(result).toEqual({ token: 'token', user });
     });
   });
 

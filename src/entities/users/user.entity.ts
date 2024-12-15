@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { UserRole } from '../user-role/user-role.entity';
 
 @Entity('users')

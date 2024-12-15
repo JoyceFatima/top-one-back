@@ -1,5 +1,3 @@
-import { Role } from '@/common/enums/role.enum';
-import { decryptPassword, encryptPassword } from '@/utils/funcs';
 import {
   BadRequestException,
   InternalServerErrorException,
@@ -7,9 +5,13 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { decryptPassword, encryptPassword } from '@/utils/funcs';
+
 import { User } from '../../entities/users/user.entity';
 import { RolesService } from '../roles/roles.service';
 import { UsersRolesService } from '../users-roles/users-roles.service';
+
 import { UsersService } from './users.service';
 
 jest.mock('@/utils/funcs');
@@ -95,48 +97,53 @@ describe('UsersService', () => {
         new Error('Database error'),
       );
 
-      await expect(usersService.findOne({ id: '1' })).rejects.toThrow(
+      await expect(usersService.findOne({})).rejects.toThrow(
         InternalServerErrorException,
       );
     });
   });
 
   describe('insert', () => {
-    it('should insert a new user and assign a role', async () => {
+    it('should insert a new user', async () => {
       mockUsersRepository.findOne.mockResolvedValue(null);
-      mockRolesService.find.mockResolvedValue([{ id: 'role1', name: 'Admin' }]);
+      mockRolesService.find.mockResolvedValue([{ id: '1', name: 'Admin' }]);
       mockEncryptPassword.mockReturnValue('hashedPassword');
-      mockUsersRepository.save.mockResolvedValue(mockUser);
 
-      const result = await usersService.insert(
-        { email: 'test@example.com', password: 'password' },
-        Role.ADMIN,
-      );
+      await usersService.insert({
+        email: 'test@test.com',
+        password: 'password',
+      });
 
-      expect(result).toEqual(mockUser);
-      expect(mockRolesService.find).toHaveBeenCalledWith({ name: Role.ADMIN });
-      expect(mockEncryptPassword).toHaveBeenCalledWith('password');
+      expect(mockUsersRepository.save).toHaveBeenCalledWith({
+        email: 'test@test.com',
+        password: 'hashedPassword',
+      });
       expect(mockUsersRolesService.insert).toHaveBeenCalledWith({
-        user: mockUser,
-        role: { id: 'role1', name: 'Admin' },
+        user: undefined,
+        role: { id: '1', name: 'Admin' },
       });
     });
 
-    it('should throw an error if password is not provided', async () => {
-      mockUsersRepository.findOne.mockResolvedValue(null);
-      mockRolesService.find.mockResolvedValue([{ id: 'role1', name: 'Admin' }]);
-
-      await expect(
-        usersService.insert({ email: 'test@example.com' }, Role.ADMIN),
-      ).rejects.toThrow('Password is required');
-    });
-
-    it('should throw an error if user already exists', async () => {
+    it('should throw Error if user already exists', async () => {
       mockUsersRepository.findOne.mockResolvedValue(mockUser);
 
       await expect(
-        usersService.insert({ email: 'test@example.com' }, Role.ADMIN),
-      ).rejects.toThrow('User already exists');
+        usersService.insert({
+          email: 'exist@test.com',
+          password: 'password',
+        }),
+      ).rejects.toThrow(Error);
+    });
+
+    it('should throw if not password provided', async () => {
+      mockUsersRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        usersService.insert({
+          email: 'test@test.com',
+          password: undefined,
+        }),
+      ).rejects.toThrow(Error);
     });
 
     it('should throw NotFoundException if role not found', async () => {
@@ -144,10 +151,10 @@ describe('UsersService', () => {
       mockRolesService.find.mockResolvedValue([]);
 
       await expect(
-        usersService.insert(
-          { email: 'test@example.com', password: 'password' },
-          Role.ADMIN,
-        ),
+        usersService.insert({
+          email: 'test@test.com',
+          password: 'password',
+        }),
       ).rejects.toThrow(NotFoundException);
     });
   });

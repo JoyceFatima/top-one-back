@@ -1,7 +1,3 @@
-import { Role } from '@/common/enums/role.enum';
-import { Roles } from '@/decorator/roles.decorator';
-import { AuthGuard } from '@/guards/auth.guard';
-import { RolesGuard } from '@/guards/roles.guard';
 import {
   Body,
   Controller,
@@ -14,6 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+
 import { ClientsService } from './clients.service';
 import { IClient } from './interfaces/clients.dto';
 

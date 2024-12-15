@@ -1,5 +1,3 @@
-import { Role } from '@/common/enums/role.enum';
-import { decryptPassword, encryptPassword } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
@@ -8,9 +6,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Role } from '@/common/enums/role.enum';
+import { decryptPassword, encryptPassword } from '@/utils/funcs';
+
 import { User } from '../../entities/users/user.entity';
 import { RolesService } from '../roles/roles.service';
 import { UsersRolesService } from '../users-roles/users-roles.service';
+
 import { IChangePassword } from './interfaces/change-password';
 
 @Injectable()
@@ -25,15 +28,16 @@ export class UsersService {
   async find(where?: Partial<User>): Promise<User[]> {
     try {
       return await this.usersRepository.find({ where });
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Error retrieving users');
     }
   }
 
   async findOne(where?: Partial<User>): Promise<User> {
     try {
-      return await this.usersRepository.findOne({ where });
-    } catch (error) {
+      const user = await this.usersRepository.findOne({ where });
+      return user;
+    } catch {
       throw new InternalServerErrorException('Error retrieving user');
     }
   }

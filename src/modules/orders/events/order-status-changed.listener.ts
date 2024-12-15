@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+
 import { EmailService } from '../../email/email.service';
+
 import { OrderStatusChangedEvent } from './order-status-changed.event';
 
 @Injectable()

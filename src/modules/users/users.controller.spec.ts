@@ -1,7 +1,9 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { Role } from '@/common/enums/role.enum';
 import { AuthGuard } from '@/guards/auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
-import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

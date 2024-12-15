@@ -1,12 +1,15 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { AuthGuard } from '@/guards/auth.guard';
 import { RolesGuard } from '@/guards/roles.guard';
-import { getToken } from '@/utils/funcs';
-import { Test, TestingModule } from '@nestjs/testing';
+import { decodeToken, getToken } from '@/utils/funcs';
+
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 
 jest.mock('@/utils/funcs');
 const mockGetToken = getToken as jest.Mock;
+const mockDecodeToken = decodeToken as jest.Mock;
 
 const mockProduct = {
   id: '1',
@@ -71,6 +74,7 @@ describe('ProductController', () => {
   describe('createProduct', () => {
     it('should create a new product', async () => {
       mockGetToken.mockReturnValue('decodedToken');
+      mockGetToken.mockReturnValue('decodedToken');
       productService.createProduct.mockResolvedValue(mockProduct);
 
       const result = await productController.createProduct(
@@ -80,10 +84,7 @@ describe('ProductController', () => {
 
       expect(result).toEqual({ message: 'Product created', data: mockProduct });
       expect(mockGetToken).toHaveBeenCalledWith('Bearer token');
-      expect(productService.createProduct).toHaveBeenCalledWith(
-        'decodedToken',
-        mockProduct,
-      );
+      expect(mockDecodeToken).toHaveBeenCalledWith('decodedToken');
     });
 
     it('should handle errors gracefully', async () => {

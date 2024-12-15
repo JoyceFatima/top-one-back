@@ -1,5 +1,7 @@
-import { ShoppingCart } from '@/entities/shopping-cart/shopping-cart.entity';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { ShoppingCart } from '@/entities/shopping-cart/shopping-cart.entity';
+
 import { IShoppingCart } from './interfaces/shopping-cart.dto';
 import { ShoppingCartController } from './shopping-cart.controller';
 import { ShoppingCartService } from './shopping-cart.service';

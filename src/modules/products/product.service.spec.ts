@@ -1,19 +1,22 @@
-import { decodeToken } from '@/utils/funcs';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { decodeToken } from '@/utils/funcs';
+
 import { Product } from '../../entities/products/product.entity';
+
 import { ProductService } from './product.service';
 
 jest.mock('@/utils/funcs');
 const mockDecodeToken = decodeToken as jest.Mock;
 
 const mockProduct = {
-  id: '1',
-  name: 'Test Product',
-  price: 100,
-  stock: 10,
   discount: 10,
+  name: 'New Product',
+  price: 50,
+  stock: 20,
+  user: { id: 'user1' },
 };
 const mockProductRepository = {
   find: jest.fn(),
@@ -81,19 +84,19 @@ describe('ProductService', () => {
       mockDecodeToken.mockReturnValue({ id: 'user1' });
       mockProductRepository.save.mockResolvedValue(mockProduct);
 
-      const result = await productService.createProduct('token', {
-        name: 'New Product',
-        price: 50,
-        stock: 20,
-        discount: 10,
-      });
+      const result = await productService.createProduct(
+        { id: 'user1' } as any,
+        {
+          name: 'New Product',
+          price: 50,
+          stock: 20,
+          discount: 10,
+        },
+      );
 
       expect(result).toEqual(mockProduct);
       expect(mockProductRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'New Product',
-          userId: 'user1',
-        }),
+        expect.objectContaining(mockProduct),
       );
     });
 
@@ -101,7 +104,7 @@ describe('ProductService', () => {
       mockDecodeToken.mockReturnValue({ id: 'user1' });
 
       await expect(
-        productService.createProduct('token', {
+        productService.createProduct({ id: 'user1' } as any, {
           name: 'New Product',
           price: 50,
           stock: 20,

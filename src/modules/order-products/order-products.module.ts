@@ -1,6 +1,8 @@
-import { OrderProducts } from '@/entities/order-products/order-products.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { OrderProducts } from '@/entities/order-products/order-products.entity';
+
 import { OrderProductsService } from './order-products.service';
 
 @Module({

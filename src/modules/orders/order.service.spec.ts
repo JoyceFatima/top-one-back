@@ -1,14 +1,17 @@
-import { Status } from '@/common/enums';
-import { decodeToken } from '@/utils/funcs';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { Status } from '@/common/enums';
+import { decodeToken } from '@/utils/funcs';
+
 import { Order } from '../../entities/orders/order.entity';
 import { ClientsService } from '../clients/clients.service';
 import { OrderProductsService } from '../order-products/order-products.service';
 import { ProductService } from '../products/product.service';
 import { ShoppingCartService } from '../shopping-cart/shopping-cart.service';
+
 import { OrdersService } from './order.service';
 
 jest.mock('@/utils/funcs');
@@ -138,7 +141,7 @@ describe('OrdersService', () => {
       mockOrderProductsService.create.mockResolvedValue({ id: 'op1' });
       mockOrdersRepository.save.mockResolvedValue(mockOrder);
 
-      const result = await ordersService.create('token', {
+      const result = await ordersService.create({ id: 'user1' } as any, {
         clientId: '1',
         products: [{ id: 'prod1', quantity: 2 }],
         shoppingCarts: ['cart1'],

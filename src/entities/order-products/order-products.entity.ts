@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+
 import { Order } from '../orders/order.entity';
 import { Product } from '../products/product.entity';
 

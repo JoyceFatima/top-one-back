@@ -1,4 +1,3 @@
-import { decodeToken } from '@/utils/funcs';
 import {
   BadRequestException,
   Injectable,
@@ -6,7 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { User } from '@/entities/users/user.entity';
+
 import { Product } from '../../entities/products/product.entity';
+
 import { IProduct } from './interfaces/product.dto';
 
 @Injectable()
@@ -26,14 +29,12 @@ export class ProductService {
     return product;
   }
 
-  async createProduct(token: string, data: IProduct): Promise<Product> {
-    const user = decodeToken(token);
-
+  async createProduct(user: User, data: IProduct): Promise<Product> {
     this.validateDiscount(data.discount);
 
     return this.productRepository.save({
       ...data,
-      userId: user.id,
+      user,
     });
   }
 

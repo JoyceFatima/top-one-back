@@ -1,7 +1,8 @@
-import { config } from '@/config';
-import { User } from '@/entities/users/user.entity';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+
+import { config } from '@/config';
+import { User } from '@/entities/users/user.entity';
 
 const {
   secutiy: { bcryptSalt, jwtSecret, jwtExpire },

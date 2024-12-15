@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { ShoppingCart } from '../../entities/shopping-cart/shopping-cart.entity';
 import { ClientsService } from '../clients/clients.service';
 import { ProductService } from '../products/product.service';
+
 import { IShoppingCart } from './interfaces/shopping-cart.dto';
 
 @Injectable()

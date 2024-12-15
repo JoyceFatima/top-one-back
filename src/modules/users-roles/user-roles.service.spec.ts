@@ -1,11 +1,14 @@
-import { Role } from '@/common/enums/role.enum';
-import { Role as RoleEntity } from '@/entities/roles/role.entity';
-import { User } from '@/entities/users/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Role } from '@/common/enums/role.enum';
+import { Role as RoleEntity } from '@/entities/roles/role.entity';
+import { User } from '@/entities/users/user.entity';
+
 import { UserRole } from '../../entities/user-role/user-role.entity';
+
 import { UsersRolesService } from './users-roles.service';
 
 const mockUserRole: UserRole = {
@@ -15,8 +18,8 @@ const mockUserRole: UserRole = {
     name: Role.ADMIN,
     description: 'Admin role',
     isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date('2020-11-11'),
+    updatedAt: new Date('2020-11-11'),
     deletedAt: null,
   },
   user: {
@@ -24,8 +27,8 @@ const mockUserRole: UserRole = {
     username: 'testuser',
     email: 'test@gmail.com',
     password: 'hashedPassword123',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date('2020-11-11'),
+    updatedAt: new Date('2020-11-11'),
     deletedAt: null,
     userRoles: [],
   },
@@ -103,8 +106,8 @@ describe('UsersRolesService', () => {
           name: Role.ADMIN,
           description: 'Admin role',
           isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date('2020-11-11'),
+          updatedAt: new Date('2020-11-11'),
           deletedAt: null,
         },
       });
@@ -115,8 +118,8 @@ describe('UsersRolesService', () => {
           name: Role.ADMIN,
           description: 'Admin role',
           isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date('2020-11-11'),
+          updatedAt: new Date('2020-11-11'),
           deletedAt: null,
         },
       });

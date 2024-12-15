@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { EmailService } from '../../email/email.service';
+
 import { OrderStatusChangedEvent } from './order-status-changed.event';
 import { OrderStatusChangedListener } from './order-status-changed.listener';
 
 describe('OrderStatusChangedListener', () => {
   let listener: OrderStatusChangedListener;
-  let emailService: EmailService;
 
   const mockEmailService = {
     sendEmail: jest.fn(),
@@ -30,7 +31,6 @@ describe('OrderStatusChangedListener', () => {
     listener = module.get<OrderStatusChangedListener>(
       OrderStatusChangedListener,
     );
-    emailService = module.get<EmailService>(EmailService);
   });
 
   afterEach(() => {

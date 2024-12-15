@@ -1,8 +1,11 @@
-import { capitalize } from '@/utils/funcs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { capitalize } from '@/utils/funcs';
+
 import { Role } from '../../entities/roles/role.entity';
+
 import { IRole } from './interfaces/roles.dto';
 
 @Injectable()

@@ -1,8 +1,10 @@
-import { Status } from '@/common/enums';
-import { OrderProducts } from '@/entities/order-products/order-products.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { Status } from '@/common/enums';
+import { OrderProducts } from '@/entities/order-products/order-products.entity';
+
 import { OrderProductsService } from './order-products.service';
 
 const mockOrderProduct: OrderProducts = {

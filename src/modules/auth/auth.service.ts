@@ -4,15 +4,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { isEmail } from 'class-validator';
-import { User } from 'src/entities';
+
+import { User } from '@/entities/users/user.entity';
 import {
   decodeToken,
   decryptPassword,
   encryptPassword,
   generateToken,
   isTokenExpired,
-} from 'src/utils/funcs';
+} from '@/utils/funcs';
+
 import { UsersService } from '../users/users.service';
+
 import { IChangePassword } from './interfaces/change-password.dto';
 import { ILogin } from './interfaces/login.dto';
 
@@ -31,7 +34,7 @@ export class AuthService {
 
     const token = generateToken({ password: userFound.password, ...userFound });
 
-    return { token, userFound };
+    return { token, user: userFound };
   }
 
   async renewToken(jwt: string) {
@@ -71,7 +74,7 @@ export class AuthService {
   }
 
   private async fetchUser(where: object): Promise<User> {
-    const [user] = await this.usersService.find(where);
+    const user = await this.usersService.findOne(where);
     if (!user) {
       throw new NotFoundException('User not found');
     }

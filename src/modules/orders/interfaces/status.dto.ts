@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Status } from 'src/common/enums';
+
+import { Status } from '@/common/enums';
 
 export class IStatus {
   @IsNotEmpty()

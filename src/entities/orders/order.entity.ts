@@ -1,15 +1,18 @@
-import { Status } from 'src/common/enums';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Status } from '@/common/enums';
+
 import { Client } from '../clients/clients.entity';
 import { OrderProducts } from '../order-products/order-products.entity';
 import { User } from '../users/user.entity';
@@ -18,19 +21,6 @@ import { User } from '../users/user.entity';
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'client_id',
-  })
-  clientId: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'user_id',
-    nullable: true,
-  })
-  userId?: string;
 
   @Column({
     type: 'decimal',
@@ -45,6 +35,7 @@ export class Order {
     enum: Status,
     default: Status.PROCESSING,
   })
+  @Index()
   status: Status;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
@@ -54,18 +45,19 @@ export class Order {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
+  @Index()
   deletedAt: Date;
 
-  @ManyToOne(() => Client, (client) => client.id)
+  @ManyToOne(() => Client, (client) => client.id, { eager: true })
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => OrderProducts, (orderProduct) => orderProduct.order, {
-    cascade: true,
+    eager: true,
   })
   orderProducts: OrderProducts[];
 }

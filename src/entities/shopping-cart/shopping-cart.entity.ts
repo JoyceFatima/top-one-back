@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Client } from '../clients/clients.entity';
 import { Product } from '../products/product.entity';
 
@@ -15,18 +16,6 @@ import { Product } from '../products/product.entity';
 export class ShoppingCart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'client_id',
-  })
-  clientId: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'product_id',
-  })
-  productId: string;
 
   @Column({
     type: 'int',
@@ -48,7 +37,7 @@ export class ShoppingCart {
   @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, { eager: true })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 }

@@ -10,20 +10,22 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/enums/role.enum';
-import { Roles } from 'src/decorator/roles.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
+
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+
 import { ClientsService } from './clients.service';
 import { IClient } from './interfaces/clients.dto';
 
 @ApiTags('Clients')
 @Controller('clients')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
+  @Roles(Role.ADMIN, Role.SELLER)
   @Get()
   async findAll(@Query('relations') relations?: string[]) {
     try {
@@ -34,17 +36,18 @@ export class ClientsController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
-      const [client] = await this.clientsService.find({ id });
-      if (!client) throw new Error('Client not found');
+      const client = await this.clientsService.findOne({ id });
       return { message: 'Success', data: client, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };
     }
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   async create(@Body() client: IClient) {
     try {
@@ -59,6 +62,7 @@ export class ClientsController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Put(':id')
   async update(@Param('id') id: string, @Body() client: Partial<IClient>) {
     try {
@@ -69,6 +73,7 @@ export class ClientsController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

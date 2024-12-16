@@ -5,12 +5,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from 'src/common/enums/role.enum';
-import { decryptPassword, encryptPassword } from 'src/utils/funcs';
 import { Repository } from 'typeorm';
+
+import { Role } from '@/common/enums/role.enum';
+import { decryptPassword, encryptPassword } from '@/utils/funcs';
+
 import { User } from '../../entities/users/user.entity';
 import { RolesService } from '../roles/roles.service';
 import { UsersRolesService } from '../users-roles/users-roles.service';
+
 import { IChangePassword } from './interfaces/change-password';
 
 @Injectable()
@@ -22,18 +25,24 @@ export class UsersService {
     private usersRolesService: UsersRolesService,
   ) {}
 
-  async find(
-    where?: Partial<User>,
-    relations: string[] = ['userRole.role'],
-  ): Promise<User[]> {
+  async find(where?: Partial<User>): Promise<User[]> {
     try {
-      return await this.usersRepository.find({ where, relations });
-    } catch (error) {
+      return await this.usersRepository.find({ where });
+    } catch {
       throw new InternalServerErrorException('Error retrieving users');
     }
   }
 
-  async insert(data: Partial<User>, roleCreate?: Role): Promise<User> {
+  async findOne(where?: Partial<User>): Promise<User> {
+    try {
+      const user = await this.usersRepository.findOne({ where });
+      return user;
+    } catch {
+      throw new InternalServerErrorException('Error retrieving user');
+    }
+  }
+
+  async insert(data: Partial<User>, roleName?: Role): Promise<User> {
     try {
       const findUser = await this.usersRepository.findOne({
         where: { email: data.email },
@@ -43,7 +52,7 @@ export class UsersService {
         throw new Error('User already exists');
       }
 
-      const [role] = await this.rolesService.find({ description: roleCreate });
+      const [role] = await this.rolesService.find({ name: roleName });
       if (!role) throw new NotFoundException('Role not found');
 
       if (!data.password) {
@@ -53,8 +62,8 @@ export class UsersService {
       const password = encryptPassword(data.password);
       const user = await this.usersRepository.save({ ...data, password });
       this.usersRolesService.insert({
-        userId: user.id,
-        roleId: role.id,
+        user,
+        role,
       });
 
       return user;
@@ -65,10 +74,19 @@ export class UsersService {
 
   async upsert(data: User, id?: string): Promise<void> {
     const [user] = await this.find({ id });
+
     if (!user) {
-      await this.insert(data);
+      await this.insert(data, data.userRoles[0].role.name);
     } else {
-      await this.usersRepository.update(user.id, data);
+      for (const role of user.userRoles) {
+        await this.usersRolesService.delete(role.id);
+      }
+      const userUpdated = await this.usersRepository.save(data);
+
+      this.usersRolesService.insert({
+        user: userUpdated,
+        role: data.userRoles[0].role,
+      });
     }
   }
 
@@ -101,7 +119,9 @@ export class UsersService {
     const [user] = await this.find({ id });
     if (!user) throw new NotFoundException('User not found');
 
-    await this.usersRolesService.delete(user.userRole.id);
+    for (const role of user.userRoles) {
+      await this.usersRolesService.delete(role.id);
+    }
     await this.usersRepository.delete(id);
   }
 }

@@ -5,12 +5,17 @@ import {
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Status } from 'src/common/enums';
-import { Role } from 'src/common/enums/role.enum';
-import { decodeToken } from 'src/utils/funcs';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+
+import { Status } from '@/common/enums';
+import { User } from '@/entities/users/user.entity';
+
 import { Order } from '../../entities/orders/order.entity';
-import { Product } from '../../entities/products/product.entity';
+import { ClientsService } from '../clients/clients.service';
+import { OrderProductsService } from '../order-products/order-products.service';
+import { ProductService } from '../products/product.service';
+import { ShoppingCartService } from '../shopping-cart/shopping-cart.service';
+
 import { OrderStatusChangedEvent } from './events/order-status-changed.event';
 import { IOrder } from './interfaces/order.dto';
 import { IStatus } from './interfaces/status.dto';
@@ -20,24 +25,22 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
-    @InjectRepository(Product)
-    private readonly productsRepository: Repository<Product>,
+    private readonly clientService: ClientsService,
+    private readonly productService: ProductService,
+    private readonly orderProductsService: OrderProductsService,
+    private readonly shoppingCartService: ShoppingCartService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async findAll(status?: Status): Promise<Order[]> {
+  async findAll(where?: FindOptionsWhere<Order>): Promise<Order[]> {
     return await this.ordersRepository.find({
-      where: status ? { status } : {},
+      where,
       order: { createdAt: 'DESC' },
       relations: ['client', 'orderProducts', 'orderProducts.product'],
     });
   }
 
   async findOne(id: string): Promise<Order> {
-    if (!id) {
-      throw new NotFoundException('Order ID is required');
-    }
-
     const order = await this.ordersRepository.findOne({
       where: { id },
       relations: ['client', 'orderProducts', 'orderProducts.product'],
@@ -54,77 +57,113 @@ export class OrdersService {
     }
 
     return await this.ordersRepository.find({
-      where: { clientId },
+      where: {
+        client: {
+          id: clientId,
+        },
+      },
       relations: ['orderProducts', 'orderProducts.product'],
     });
   }
 
-  async create(token: string, data: IOrder): Promise<Order> {
-    const user = decodeToken(token);
-    const product = await this.getProductById(data.productId);
+  async create(user: User, data: IOrder): Promise<Order> {
+    const client = await this.clientService.findOne({ id: data.clientId });
 
-    this.validateQuantity(data.quantity);
-    this.validateStock(product.stock, data.quantity);
+    const productsWithDetails = await Promise.all(
+      data.products.map(async ({ id, quantity }) => {
+        const product = await this.productService.findOne(id);
+        const stock = product.stock - quantity;
 
-    const totalPrice = this.calculateTotalPrice(product.price, data.quantity);
+        await this.productService.update({ ...product, stock }, id);
 
-    product.stock -= data.quantity;
-    await this.productsRepository.save(product);
+        return { product, quantity };
+      }),
+    );
 
-    const userId = user.userRole[0].name === Role.SELLER ? user.id : undefined;
+    const orderProducts = await Promise.all(
+      productsWithDetails.map(({ product, quantity }) =>
+        this.orderProductsService.create({ product, quantity }),
+      ),
+    );
 
-    const order = this.ordersRepository.create({
-      ...data,
-      userId,
+    const totalPrice = productsWithDetails.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0,
+    );
+
+    const order = {
+      client,
+      user,
+      orderProducts,
+      status: Status.PROCESSING,
       totalPrice,
+    };
+    return this.ordersRepository.save(order).then((res) => {
+      for (const shoppingCartId of data.shoppingCarts) {
+        this.shoppingCartService.delete(shoppingCartId);
+      }
+      return res;
+    });
+  }
+
+  async update(orderId: string, data: IOrder): Promise<void> {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+      relations: ['orderProducts', 'orderProducts.product'],
     });
 
-    return await this.ordersRepository.save(order);
-  }
-
-  async update(id: string, data: Partial<IOrder>): Promise<Order> {
-    const order = await this.findOne(id);
-
-    if (data.productId) {
-      const product = await this.getProductById(data.productId);
-      this.validateStock(product.stock, data.quantity);
-      order.totalPrice = this.calculateTotalPrice(product.price, data.quantity);
-      product.stock -= data.quantity;
-      await this.productsRepository.save(product);
+    if (!order) {
+      throw new Error(`Order with ID ${orderId} not found.`);
     }
 
-    return await this.ordersRepository.save({ ...order, ...data });
-  }
+    for (const orderProduct of order.orderProducts) {
+      const product = await this.productService.findOne(
+        orderProduct.product.id,
+      );
+      const updatedStock = product.stock + orderProduct.quantity;
 
-  private async getProductById(productId: string): Promise<Product> {
-    const product = await this.productsRepository.findOne({
-      where: { id: productId },
-    });
-    if (!product) {
-      throw new NotFoundException('Product not found');
+      await this.productService.update(
+        { ...product, stock: updatedStock },
+        product.id,
+      );
+
+      await this.orderProductsService.delete(orderProduct.id);
     }
-    return product;
-  }
 
-  private validateQuantity(quantity: number): void {
-    if (quantity < 1) {
-      throw new BadRequestException('Quantity must be at least 1');
-    }
-  }
+    const productsWithDetails = await Promise.all(
+      data.products.map(async ({ id, quantity }) => {
+        const product = await this.productService.findOne(id);
 
-  private validateStock(stock: number, quantity: number): void {
-    if (quantity > stock) {
-      throw new BadRequestException('Insufficient stock for this product');
-    }
-  }
+        const updatedStock = product.stock - quantity;
+        if (updatedStock < 0) {
+          throw new Error(`Insufficient stock for product ID ${id}`);
+        }
 
-  private calculateTotalPrice(price: number, quantity: number): number {
-    return price * quantity;
-  }
+        await this.productService.update(
+          { ...product, stock: updatedStock },
+          product.id,
+        );
 
-  async delete(id: string): Promise<void> {
-    const order = await this.findOne(id);
-    await this.ordersRepository.remove(order);
+        return { product, quantity };
+      }),
+    );
+
+    const newOrderProducts = await Promise.all(
+      productsWithDetails.map(({ product, quantity }) =>
+        this.orderProductsService.create({ product, quantity }),
+      ),
+    );
+
+    const totalPrice = productsWithDetails.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0,
+    );
+
+    order.orderProducts = newOrderProducts;
+    order.totalPrice = totalPrice;
+    order.updatedAt = new Date();
+
+    await this.ordersRepository.save(order);
   }
 
   async updateStatus(orderId: string, newStatus: IStatus): Promise<Order> {
@@ -154,5 +193,18 @@ export class OrdersService {
     );
 
     return order;
+  }
+
+  async delete(id: string): Promise<void> {
+    const order = await this.findOne(id);
+    const orderProducts = await this.orderProductsService.findAll({
+      order: {
+        id,
+      },
+    });
+    for (const orderProduct of orderProducts) {
+      await this.orderProductsService.delete(orderProduct.id);
+    }
+    await this.ordersRepository.remove(order);
   }
 }

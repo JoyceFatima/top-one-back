@@ -27,4 +27,8 @@ export class IProduct {
   @Min(0)
   @IsOptional()
   discount?: number;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }

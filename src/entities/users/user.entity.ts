@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { UserRole } from '../user-role/user-role.entity';
 
 @Entity('users')
@@ -16,15 +18,27 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'Unique username for the user' })
+  @ApiProperty({
+    description: 'Unique username for the user',
+    example: 'johndoe',
+    required: true,
+  })
   @Column({ unique: true })
   username: string;
 
-  @ApiProperty({ description: 'Unique email address for the user' })
+  @ApiProperty({
+    description: 'Unique email address for the user',
+    example: 'user@example.com',
+    required: true,
+  })
   @Column({ unique: true })
   email: string;
 
-  @ApiProperty({ description: 'Encrypted password for the user' })
+  @ApiProperty({
+    description: 'Encrypted password for the user',
+    example: 'hashed_password_here',
+    required: true,
+  })
   @Exclude({ toClassOnly: false })
   @Column()
   password: string;
@@ -36,8 +50,12 @@ export class User {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp' })
+  @Index()
   deletedAt: Date;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user, { cascade: true })
-  userRole: UserRole;
+  @OneToMany(() => UserRole, (userRole) => userRole.user, {
+    eager: true,
+    cascade: true,
+  })
+  userRoles: UserRole[];
 }

@@ -11,21 +11,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/enums/role.enum';
-import { Roles } from 'src/decorator/roles.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { getToken } from 'src/utils/funcs';
+
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+import { decodeToken, getToken } from '@/utils/funcs';
+
 import { IProduct } from './interfaces/product.dto';
 import { ProductService } from './product.service';
 
 @ApiTags('Products')
 @Controller('products')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Roles(Role.ADMIN, Role.SELLER)
   @Get()
   async findAll() {
     try {
@@ -36,6 +38,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   async createProduct(
     @Headers('Authorization') authHeader: string,
@@ -43,13 +46,15 @@ export class ProductController {
   ) {
     try {
       const token = getToken(authHeader);
-      const data = await this.productService.createProduct(token, productData);
+      const user = decodeToken(token);
+      const data = await this.productService.createProduct(user, productData);
       return { message: 'Product created', data };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };
     }
   }
 
+  @Roles(Role.ADMIN)
   @Put(':id')
   async updateProduct(
     @Param('id') id: string,
@@ -63,6 +68,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id/discount')
   async applyDiscount(
     @Param('id') id: string,
@@ -76,6 +82,7 @@ export class ProductController {
     }
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async deleteProduct(@Param('id') id: string) {
     try {

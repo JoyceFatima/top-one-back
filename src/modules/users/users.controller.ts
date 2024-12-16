@@ -7,15 +7,17 @@ import {
   Patch,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/enums/role.enum';
-import { Roles } from 'src/decorator/roles.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
+
+import { Role } from '@/common/enums/role.enum';
+import { Roles } from '@/decorator/roles.decorator';
+import { AuthGuard } from '@/guards/auth.guard';
+import { RolesGuard } from '@/guards/roles.guard';
+
 import { User } from '../../entities/users/user.entity';
+
 import { IChangePassword } from './interfaces/change-password';
 import { IUser } from './interfaces/user.dto';
 import { UsersService } from './users.service';
@@ -28,9 +30,9 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async findAll(@Query('relations') relations?: string[]) {
+  async findAll() {
     try {
-      const res = await this.usersService.find({}, relations);
+      const res = await this.usersService.find({});
       return { message: 'Success', data: res, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };
@@ -40,12 +42,9 @@ export class UsersController {
   @Get(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async findOne(
-    @Param('id') id: string,
-    @Query('relations') relations?: string[],
-  ) {
+  async findOne(@Param('id') id: string) {
     try {
-      const res = await this.usersService.find({ id }, relations);
+      const res = await this.usersService.findOne({ id });
       return { message: 'Success', data: res, statusCode: 200 };
     } catch (error) {
       throw { message: error.message, statusCode: 400 };

@@ -1,29 +1,21 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
+
 import { Order } from '../orders/order.entity';
 import { Product } from '../products/product.entity';
 
-@Entity('order-products')
+@Entity('order_products')
+@Unique(['order', 'product'])
 export class OrderProducts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'order_id',
-  })
-  orderId: string;
-
-  @Column({
-    type: 'uuid',
-    name: 'product_id',
-  })
-  productId: string;
 
   @Column({
     type: 'int',
@@ -32,11 +24,13 @@ export class OrderProducts {
   })
   quantity: number;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, { eager: true })
   @JoinColumn({ name: 'product_id' })
+  @Index()
   product: Product;
 
   @ManyToOne(() => Order, (order) => order.orderProducts)
   @JoinColumn({ name: 'order_id' })
+  @Index()
   order: Order;
 }

@@ -9,7 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/guards/auth.guard';
+
+import { AuthGuard } from '@/guards/auth.guard';
+
 import { IShoppingCart } from './interfaces/shopping-cart.dto';
 import { ShoppingCartService } from './shopping-cart.service';
 
@@ -59,9 +61,9 @@ export class ShoppingCartController {
 
   @Delete(':id')
   @UseGuards(new AuthGuard())
-  async removeFromCart(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     try {
-      await this.shoppingCartService.removeFromCart(id);
+      await this.shoppingCartService.delete(id);
       return { message: 'Removed from cart' };
     } catch (error) {
       throw error;

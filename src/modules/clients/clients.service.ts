@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from '../../entities/clients/clients.entity';
+
+import { Client } from '@/entities/clients/clients.entity';
 
 @Injectable()
 export class ClientsService {
@@ -15,6 +16,14 @@ export class ClientsService {
     relations: string[] = [],
   ): Promise<Client[]> {
     return this.clientsRepository.find({ where, relations });
+  }
+
+  async findOne(
+    where: Partial<Client>,
+    relations: string[] = [],
+  ): Promise<Client> {
+    const client = await this.clientsRepository.findOne({ where, relations });
+    return client;
   }
 
   async insert(data: Partial<Client>): Promise<Client> {

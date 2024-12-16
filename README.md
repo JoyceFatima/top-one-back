@@ -1,73 +1,148 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Top One API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a NestJS-based API designed to provide robust and scalable backend services. Below is a detailed description of the primary scripts available in the `package.json`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Getting Started
 
-## Description
+To start working with this project, make sure you have Node.js installed. You can use `npm` to install the dependencies and run the scripts.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Installation
 
-## Installation
+Run the following command to install the project dependencies:
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Running the app
+## Available Scripts
 
-```bash
-# development
-$ npm run start
+### Build and Start Scripts
 
-# watch mode
-$ npm run start:dev
+- **`build`**: Compiles the project into the `dist` folder.
 
-# production mode
-$ npm run start:prod
-```
+  ```bash
+  npm run build
+  ```
 
-## Test
+- **`start`**: Starts the application in production mode.
 
-```bash
-# unit tests
-$ npm run test
+  ```bash
+  npm run start
+  ```
 
-# e2e tests
-$ npm run test:e2e
+- **`start:dev`**: Starts the application in development mode with hot reloading enabled.
 
-# test coverage
-$ npm run test:cov
-```
+  ```bash
+  npm run start:dev
+  ```
 
-## Support
+- **`start:debug`**: Starts the application in debug mode with hot reloading enabled.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+  ```bash
+  npm run start:debug
+  ```
 
-## Stay in touch
+- **`start:prod`**: Runs the compiled application from the `dist` folder.
+  ```bash
+  npm run start:prod
+  ```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Code Quality and Formatting
 
-## License
+- **`format`**: Formats the codebase using Prettier.
 
-Nest is [MIT licensed](LICENSE).
+  ```bash
+  npm run format
+  ```
+
+- **`lint`**: Lints the codebase using ESLint and attempts to fix issues automatically.
+  ```bash
+  npm run lint
+  ```
+
+### Testing
+
+- **`test`**: Runs all tests using Jest.
+
+  ```bash
+  npm run test
+  ```
+
+- **`test:watch`**: Runs tests in watch mode.
+
+  ```bash
+  npm run test:watch
+  ```
+
+- **`test:cov`**: Runs tests and generates a coverage report.
+
+  ```bash
+  npm run test:cov
+  ```
+
+- **`test:debug`**: Runs tests in debug mode.
+
+  ```bash
+  npm run test:debug
+  ```
+
+- **`test:e2e`**: Runs end-to-end tests with a custom Jest configuration.
+  ```bash
+  npm run test:e2e
+  ```
+
+### Database Migration Scripts
+
+These scripts use TypeORM to manage database migrations.
+
+- **`migration:show`**: Displays the list of pending migrations.
+
+  ```bash
+  npm run migration:show
+  ```
+
+- **`migration:create`**: Creates a new migration file in the `src/common/database/migrations/` directory. You must specify the migration name:
+
+  ```bash
+  npm run migration:create --name=your-migration-name
+  ```
+
+- **`migration:generate`**: Generates a new migration file based on changes in the database schema. You must specify the migration name:
+
+  ```bash
+  npm run migration:generate --name=your-migration-name
+  ```
+
+- **`migration:run`**: Applies all pending migrations to the database.
+
+  ```bash
+  npm run migration:run
+  ```
+
+- **`migration:revert`**: Reverts the last applied migration.
+  ```bash
+  npm run migration:revert
+  ```
+
+### Seeding the Database
+
+- **`seed`**: Runs the seeding script located in `src/seed.ts` to populate the database with initial data.
+  ```bash
+  npm run seed
+  ```
+
+### TypeORM CLI
+
+For advanced database operations, you can use the TypeORM CLI directly:
+
+- **`typeorm:cli`**: Executes the TypeORM CLI with the data source file `src/common/database/data-source.ts`. For example:
+  ```bash
+  npm run typeorm:cli migration:show
+  ```
+
+## Additional Information
+
+- **Dependencies**: Check the `dependencies` and `devDependencies` sections in `package.json` for the libraries used in this project.
+- **Testing**: Jest is used for unit and end-to-end testing. The configuration is located in `jest` within the `package.json`.
+
+For further assistance, consult the NestJS [documentation](https://docs.nestjs.com/) or TypeORM [documentation](https://typeorm.io/).

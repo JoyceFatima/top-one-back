@@ -9,9 +9,6 @@ const {
 export const databaseConfig: DataSourceOptions = {
   type: 'postgres',
   url: databaseUrl,
-  ssl: {
-    rejectUnauthorized: false,
-  },
   entities: ['dist/entities/**/**/*.entity{.ts,.js}'],
   migrations: ['dist/common/database/migrations/*.{ts,js}'],
 };
@@ -19,9 +16,6 @@ export const databaseConfig: DataSourceOptions = {
 export const seedDatabaseConfig: DataSourceOptions = {
   type: 'postgres',
   url: databaseUrl,
-  ssl: {
-    rejectUnauthorized: false,
-  },
   entities: ['src/entities/**/**/*.entity{.ts,.js}'],
   migrations: ['src/common/database/migrations/*.{ts,js}'],
 };
